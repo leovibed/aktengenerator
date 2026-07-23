@@ -23,7 +23,7 @@
       }
     }
   </script>
-  <!-- Alpine.js für Reaktivität (Korrigierter Link) -->
+  <!-- Alpine.js für Reaktivität -->
   <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
 <body class="min-h-screen bg-neutral-950 text-neutral-100 font-sans" x-data="aktengenerator()">
@@ -96,6 +96,15 @@
       <!-- Beschuldigte / TV -->
       <div class="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5 space-y-3">
         <h2 class="text-xs uppercase tracking-[0.2em] text-emerald-400/80">Beschuldigte / TV</h2>
+        
+        <!-- Schalter für Kollektivschnellakte: Altes Verfahren -->
+        <template x-if="aktenart === 'Kollektivschnellakte'">
+          <button type="button" @click="kollektivAltesVerfahren = !kollektivAltesVerfahren" class="w-full flex items-center justify-between rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2.5 text-left mb-2">
+            <span class="text-sm text-neutral-200">Akte nach altem Verfahren</span>
+            <span :class="kollektivAltesVerfahren ? 'bg-emerald-500' : 'bg-neutral-700'" class="relative inline-flex h-6 w-11 items-center rounded-full transition"><span :class="kollektivAltesVerfahren ? 'translate-x-5' : 'translate-x-0.5'" class="inline-block h-5 w-5 transform rounded-full bg-white transition"></span></span>
+          </button>
+        </template>
+
         <template x-if="!isKollektiv">
           <div class="grid grid-cols-3 gap-2">
             <template x-for="g in ['Männlich', 'Weiblich', 'Mehrere']">
@@ -268,6 +277,7 @@
         fahndungZweck: "Vollstreckung einer offenen Akte",
         kollGenehmigtVon: "",
         kollGenehmigtUhrzeit: "",
+        kollektivAltesVerfahren: false,
         rechteVon: "",
         rechteZeuge: "",
         richterAnwesend: true,
@@ -281,7 +291,7 @@
         copied: false,
 
         get isKollektiv() { return this.aktenart === 'Kollektivakte' || this.aktenart === 'Kollektivschnellakte'; },
-        get mehrere() { return this.isKollektiv || this.geschlecht === 'Mehrere'; },
+        get mehrere() { return (this.isKollektiv && !(this.aktenart === 'Kollektivschnellakte' && this.kollektivAltesVerfahren)) || this.geschlecht === 'Mehrere'; },
         get showSachverhalt() { return ['Strafakte', 'Kollektivakte', 'Bußgeldbescheid', 'Fahndung'].includes(this.aktenart); },
 
         handleOrtChange() {
@@ -330,6 +340,12 @@
           }
 
           if (this.isKollektiv) {
+            if (this.aktenart === 'Kollektivschnellakte' && this.kollektivAltesVerfahren) {
+              const gegenstaendeBlock = this.einzelGegenstaende || '-';
+              const genehmigung = `| Genehmigung:|\nKollektivakte genehmigt von ${this.kollGenehmigtVon || '-'} um ${this.kollGenehmigtUhrzeit || '-'} Uhr.`;
+              return `${header}\n\n${tatort}${sachverhaltBlock}\n\n| Abgenommene Gegenstände:|\n${gegenstaendeBlock}\n\n${genehmigung}\n\n| Bemerkungen:|\n${bemerkungenLines}\n\n${signBlock}`;
+            }
+
             const tvBlocks = this.tvs.map((tv, i) => `| Tatverdächtiger ${i + 1}:|\n${tv.name || '-'}\nAbgenommene Gegenstände:\n${tv.gegenstaende || '-'}`).join('\n\n');
             const genehmigung = `| Genehmigung:|\nKollektivakte genehmigt von ${this.kollGenehmigtVon || '-'} um ${this.kollGenehmigtUhrzeit || '-'} Uhr.`;
             return `${header}\n\n${tatort}${sachverhaltBlock}\n\n${tvBlocks}\n\n${genehmigung}\n\n| Bemerkungen:|\n${bemerkungenLines}\n\n${signBlock}`;
