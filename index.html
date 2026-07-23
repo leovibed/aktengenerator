@@ -24,9 +24,7 @@
         }
     </script>
     <!-- Vue 3 CDN -->
-    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
-    <!-- Lucide Icons CDN -->
-    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 </head>
 <body class="bg-neutral-950 text-neutral-100 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-500 selection:text-black">
 
@@ -36,7 +34,7 @@
         <header class="mb-6 flex items-center justify-between border-b border-neutral-800 pb-4">
             <div class="flex items-center gap-3">
                 <div class="p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-emerald-400">
-                    <i data-lucide="shield-alert" class="w-7 h-7"></i>
+                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
                 </div>
                 <div>
                     <h1 class="text-xl font-bold tracking-wide uppercase text-neutral-100">Narco County Sheriff Department</h1>
@@ -58,7 +56,7 @@
                 <!-- 1. Aktenart -->
                 <div class="bg-neutral-900/60 border border-neutral-800 rounded-xl p-5 space-y-3">
                     <label class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-emerald-400">
-                        <i data-lucide="file-text" class="w-4 h-4"></i> Aktenart auswählen
+                        📄 Aktenart auswählen
                     </label>
                     <select v-model="form.aktenart" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-3 text-neutral-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
                         <option value="Schnellakte">Schnellakte</option>
@@ -73,7 +71,7 @@
                 <!-- 2. Tatort & Zeitraum -->
                 <div class="bg-neutral-900/60 border border-neutral-800 rounded-xl p-5 space-y-4">
                     <label class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-emerald-400">
-                        <i data-lucide="map-pin" class="w-4 h-4"></i> Tatort & Zeitraum
+                        📍 Tatort & Zeitraum
                     </label>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <div class="md:col-span-2">
@@ -104,7 +102,7 @@
                 <!-- 3. Beschuldigte / TV Status -->
                 <div class="bg-neutral-900/60 border border-neutral-800 rounded-xl p-5 space-y-4">
                     <label class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-emerald-400">
-                        <i data-lucide="users" class="w-4 h-4"></i> Beschuldigte / TV
+                        👥 Beschuldigte / TV
                     </label>
                     <div class="flex gap-2">
                         <button v-for="status in ['Männlich', 'Weiblich', 'Mehrere']" 
@@ -139,7 +137,7 @@
                             <textarea v-model="tv.gegenstaende" rows="2" placeholder="Abgenommene Gegenstände..." class="w-full bg-neutral-900 border border-neutral-800 rounded p-2 text-sm focus:border-emerald-500"></textarea>
                         </div>
                         <button @click="addTV" class="w-full py-2 bg-neutral-950 hover:bg-neutral-800 border border-dashed border-neutral-700 text-xs text-neutral-300 rounded-lg transition-colors flex items-center justify-center gap-2">
-                            <i data-lucide="plus" class="w-4 h-4"></i> weiteren TV hinzufügen
+                            + weiteren TV hinzufügen
                         </button>
                     </div>
                 </div>
@@ -147,7 +145,7 @@
                 <!-- 4. Dynamische Zusatzfelder -->
                 <div v-if="hasSachverhalt || form.aktenart === 'Fahndung' || isKollektiv" class="bg-neutral-900/60 border border-neutral-800 rounded-xl p-5 space-y-4">
                     <label class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-emerald-400">
-                        <i data-lucide="align-left" class="w-4 h-4"></i> Spezifische Angaben
+                        📝 Spezifische Angaben
                     </label>
 
                     <div v-if="hasSachverhalt">
@@ -195,7 +193,7 @@
                 <!-- 5. Rechte, Richter, Anwalt & Medizin -->
                 <div class="bg-neutral-900/60 border border-neutral-800 rounded-xl p-5 space-y-4">
                     <label class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-emerald-400">
-                        <i data-lucide="scale" class="w-4 h-4"></i> Protokoll & Rechte
+                        ⚖️ Protokoll & Rechte
                     </label>
 
                     <!-- Rechteverlesung -->
@@ -247,7 +245,7 @@
                 <!-- 6. Gezeichnet von -->
                 <div class="bg-neutral-900/60 border border-neutral-800 rounded-xl p-5 space-y-3">
                     <label class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-emerald-400">
-                        <i data-lucide="pen-tool" class="w-4 h-4"></i> Gezeichnet Von
+                        ✍️ Gezeichnet Von
                     </label>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
                         <input v-model="form.zeichnerName" type="text" placeholder="Name" class="bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-sm focus:border-emerald-500" />
@@ -265,10 +263,10 @@
                 <div class="sticky top-6 bg-neutral-900 border border-neutral-800 rounded-xl p-5 flex flex-col flex-grow shadow-2xl">
                     <div class="flex items-center justify-between pb-4 mb-4 border-b border-neutral-800">
                         <div class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-neutral-300">
-                            <i data-lucide="eye" class="w-4 h-4 text-emerald-400"></i> Live-Vorschau
+                            👁️ Live-Vorschau
                         </div>
                         <button @click="copyToClipboard" class="flex items-center gap-2 px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-black font-semibold text-xs rounded-lg transition-colors shadow-lg shadow-emerald-500/20">
-                            <i data-lucide="copy" class="w-3.5 h-3.5"></i> {{ copied ? 'Kopiert!' : 'Akte kopieren' }}
+                            {{ copied ? 'Kopiert!' : 'Akte kopieren' }}
                         </button>
                     </div>
 
@@ -290,7 +288,7 @@
 
     <!-- Vue Application Script -->
     <script>
-        const { createApp, ref, computed, onMounted, updated } = Vue;
+        const { createApp, ref, computed } = Vue;
 
         createApp({
             setup() {
@@ -439,15 +437,6 @@
                     copied.value = true;
                     setTimeout(() => copied.value = false, 2000);
                 };
-
-                const initLucide = () => {
-                    if (window.lucide) {
-                        window.lucide.createIcons();
-                    }
-                };
-
-                onMounted(initLucide);
-                updated(initLucide);
 
                 return {
                     form,
