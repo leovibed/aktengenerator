@@ -158,24 +158,22 @@
         </div>
       </template>
 
-      <!-- Kollektiv Genehmigung (bleibt immer sichtbar bei Kollektivakten) -->
+      <!-- Kollektiv-Genehmigung (IMMER DA bei Kollektivakten, Option für altes Verfahren zusätzlich) -->
       <template x-if="isKollektiv">
         <div class="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5 space-y-3">
           <h2 class="text-xs uppercase tracking-[0.2em] text-emerald-400/80">Kollektiv-Genehmigung</h2>
           
           <template x-if="aktenart === 'Kollektivschnellakte' && kollektivAltesVerfahren">
-            <label class="block space-y-1.5">
-              <span class="text-xs text-neutral-400">Genehmigt durch (Dienstnummer)</span>
+            <label class="block space-y-1.5 pb-2 border-b border-neutral-800">
+              <span class="text-xs text-neutral-400">Kollektivakte nach altem Recht genehmigt von (Dienstnummer)</span>
               <input type="text" x-model="kollAltesGenehmigtVon" placeholder="z.B. SD-01" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none">
             </label>
           </template>
 
-          <template x-if="!(aktenart === 'Kollektivschnellakte' && kollektivAltesVerfahren)">
-            <div class="grid grid-cols-2 gap-3">
-              <label class="block space-y-1.5"><span class="text-xs text-neutral-400">Genehmigt von (DN)</span><input type="text" x-model="kollGenehmigtVon" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none"></label>
-              <label class="block space-y-1.5"><span class="text-xs text-neutral-400">Uhrzeit</span><input type="text" x-model="kollGenehmigtUhrzeit" placeholder="HH:MM" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none"></label>
-            </div>
-          </template>
+          <div class="grid grid-cols-2 gap-3">
+            <label class="block space-y-1.5"><span class="text-xs text-neutral-400">Genehmigt von (DN)</span><input type="text" x-model="kollGenehmigtVon" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none"></label>
+            <label class="block space-y-1.5"><span class="text-xs text-neutral-400">Uhrzeit</span><input type="text" x-model="kollGenehmigtUhrzeit" placeholder="HH:MM" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none"></label>
+          </div>
         </div>
       </template>
 
@@ -351,14 +349,19 @@
           }
 
           if (this.isKollektiv) {
+            const genehmigungLines = [];
+            genehmigungLines.push(`Kollektivakte genehmigt von ${this.kollGenehmigtVon || '-'} um ${this.kollGenehmigtUhrzeit || '-'} Uhr.`);
+            if (this.aktenart === 'Kollektivschnellakte' && this.kollektivAltesVerfahren) {
+              genehmigungLines.push(`Kollektivakte nach altem Recht genehmigt von: ${this.kollAltesGenehmigtVon || '-'}`);
+            }
+            const genehmigung = `| Genehmigung:|\n` + genehmigungLines.join('\n');
+
             if (this.aktenart === 'Kollektivschnellakte' && this.kollektivAltesVerfahren) {
               const gegenstaendeBlock = this.einzelGegenstaende || '-';
-              const genehmigung = `| Genehmigung:|\nKollektivakte nach altem Recht genehmigt von: ${this.kollAltesGenehmigtVon || '-'}`;
               return `${header}\n\n${tatort}${sachverhaltBlock}\n\n| Abgenommene Gegenstände:|\n${gegenstaendeBlock}\n\n${genehmigung}\n\n| Bemerkungen:|\n${bemerkungenLines}\n\n${signBlock}`;
             }
 
             const tvBlocks = this.tvs.map((tv, i) => `| Tatverdächtiger ${i + 1}:|\n${tv.name || '-'}\nAbgenommene Gegenstände:\n${tv.gegenstaende || '-'}`).join('\n\n');
-            const genehmigung = `| Genehmigung:|\nKollektivakte genehmigt von ${this.kollGenehmigtVon || '-'} um ${this.kollGenehmigtUhrzeit || '-'} Uhr.`;
             return `${header}\n\n${tatort}${sachverhaltBlock}\n\n${tvBlocks}\n\n${genehmigung}\n\n| Bemerkungen:|\n${bemerkungenLines}\n\n${signBlock}`;
           }
 
