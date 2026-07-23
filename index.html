@@ -349,7 +349,7 @@
             : (this.einzelGegenstaende || '-');
 
           if (this.aktenart === 'Fahndung') {
-            return `${header}\n\n${tatort}${sachverhaltBlock}\n\n| Abgenommene Gegenstände:|\n${gegenstaendeBlock}\n\n| Grund der Fahndung: |\n${this.fahndungGrund || '-'}\n\n| Verknüpfte Akte: |\n${this.fahndungAkteName || '-'} | Fall-ID: ${this.fahndungFallId || '-'}\n\n| Bemerkungen:|\n${rechteSatz}\nDer o.g. Beschuldigte ist flüchtig. Beim Antreffen des Beschuldigten ist dieser festzunehmen und über seine Rechte zu belehren und der gerechten Strafe zuzuführen.\n${medizinSatz}\nDer Zweck der Fahndung ist: ${this.fahndungZweck || '-'}.\n\n${signBlock}`;
+            return `${header}\n\n${tatort}${sachverhaltBlock}\n\n| Abgenommene Gegenstände: |\n${gegenstaendeBlock}\n\n| Grund der Fahndung: |\n${this.fahndungGrund || '-'}\n\n| Verknüpfte Akte: |\n${this.fahndungAkteName || '-'} | Fall-ID: ${this.fahndungFallId || '-'}\n\n| Bemerkungen:|\n${rechteSatz}\nDer o.g. Beschuldigte ist flüchtig. Beim Antreffen des Beschuldigten ist dieser festzunehmen und über seine Rechte zu belehren und der gerechten Strafe zuzuführen.\n${medizinSatz}\nDer Zweck der Fahndung ist: ${this.fahndungZweck || '-'}.\n\n${signBlock}`;
           }
 
           if (this.isKollektiv) {
@@ -362,14 +362,14 @@
 
             if (this.aktenart === 'Kollektivschnellakte' && this.kollektivAltesVerfahren) {
               const gegenstaendeBlockKoll = this.einzelGegenstaende || '-';
-              return `${header}\n\n${tatort}${sachverhaltBlock}\n\n| Abgenommene Gegenstände:|\n${gegenstaendeBlockKoll}\n\n${genehmigung}\n\n| Bemerkungen:|\n${bemerkungenLines}\n\n${signBlock}`;
+              return `${header}\n\n${tatort}${sachverhaltBlock}\n\n| Abgenommene Gegenstände: |\n${gegenstaendeBlockKoll}\n\n${genehmigung}\n\n| Bemerkungen:|\n${bemerkungenLines}\n\n${signBlock}`;
             }
 
             const tvBlocks = this.tvs.map((tv, i) => `| Tatverdächtiger ${i + 1}:|\n${tv.name || '-'}\nAbgenommene Gegenstände:\n${tv.gegenstaende || '-'}`).join('\n\n');
             return `${header}\n\n${tatort}${sachverhaltBlock}\n\n${tvBlocks}\n\n${genehmigung}\n\n| Bemerkungen:|\n${bemerkungenLines}\n\n${signBlock}`;
           }
 
-          return `${header}\n\n${tatort}${sachverhaltBlock}\n\n| Abgenommene Gegenstände:|\n${gegenstaendeBlock}\n\n| Bemerkungen:|\n${bemerkungenLines}\n\n${signBlock}`;
+          return `${header}\n\n${tatort}${sachverhaltBlock}\n\n| Abgenommene Gegenstände: |\n${gegenstaendeBlock}\n\n| Bemerkungen:|\n${bemerkungenLines}\n\n${signBlock}`;
         },
 
         copyOutput() {
