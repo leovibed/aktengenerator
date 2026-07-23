@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aktengenerator | Narco County Sheriff Department</title>
-    <!-- Korrektes Favicon für den Browser-Tab -->
+    <!-- Favicon -->
     <link rel="icon" type="image/jpeg" href="SERT.jpg">
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
@@ -18,7 +18,7 @@
                             400: '#34d399',
                             500: '#10b981',
                             600: '#059669',
-                            900: '#064e3b',
+                            950: '#022c22',
                         }
                     },
                     borderRadius: {
@@ -32,20 +32,20 @@
     <!-- Vue 3 CDN -->
     <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
 </head>
-<body class="bg-neutral-950 text-neutral-100 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-500 selection:text-black text-xs">
+<body class="bg-[#09090b] text-neutral-100 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-500 selection:text-black text-xs">
 
-    <div id="app" class="flex-grow flex flex-col p-2.5 md:p-4 max-w-[1500px] mx-auto w-full">
+    <div id="app" class="flex-grow flex flex-col p-3 md:p-4 max-w-[1450px] mx-auto w-full">
         
         <!-- Header -->
-        <header class="mb-3 flex items-center justify-between border-b border-neutral-800/80 pb-2.5">
+        <header class="mb-3 flex items-center justify-between border-b border-neutral-800/80 pb-3">
             <div class="flex items-center gap-2.5">
                 <!-- Lovable-Style Badge Logo -->
-                <div class="h-7 w-7 bg-emerald-900/80 border border-emerald-500/40 rounded-lg flex items-center justify-center flex-shrink-0 shadow-md shadow-emerald-950/50">
+                <div class="h-7 w-7 bg-emerald-950 border border-emerald-500/40 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
                     <span class="text-emerald-400 text-xs">★</span>
                 </div>
                 <div>
                     <h1 class="text-xs font-bold tracking-wide uppercase text-neutral-100">Narco County Sheriff Department</h1>
-                    <p class="text-[10px] text-neutral-400 font-mono">Special Emergency Response Team — Aktengenerator</p>
+                    <p class="text-[10px] text-emerald-500 font-medium">Special Emergency Response Team &bull; Aktengenerator</p>
                 </div>
             </div>
             <div class="hidden sm:block text-right text-[10px] font-mono text-neutral-500 leading-tight">
@@ -55,17 +55,17 @@
         </header>
 
         <!-- Main Content -->
-        <main class="grid grid-cols-1 lg:grid-cols-12 gap-3 flex-grow">
+        <main class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 flex-grow">
             
             <!-- LEFT COLUMN: Form Controls -->
             <section class="lg:col-span-7 space-y-3">
                 
                 <!-- 1. Aktenart -->
-                <div class="bg-neutral-900/60 border border-neutral-800/80 rounded-xl p-3 space-y-1.5 shadow-lg shadow-black/20">
-                    <label class="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-emerald-400">
-                        📄 Aktenart auswählen
+                <div class="bg-[#121214] border border-neutral-800/80 rounded-xl p-3 space-y-2 shadow-sm">
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-emerald-400">
+                        Aktenart
                     </label>
-                    <select v-model="form.aktenart" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:outline-none focus:border-emerald-500 transition-all">
+                    <select v-model="form.aktenart" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:outline-none focus:border-emerald-500 transition-all">
                         <option value="Schnellakte">Schnellakte</option>
                         <option value="Strafakte">Strafakte</option>
                         <option value="Kollektivschnellakte">Kollektivschnellakte</option>
@@ -76,48 +76,48 @@
                 </div>
 
                 <!-- 2. Tatort & Zeitraum -->
-                <div class="bg-neutral-900/60 border border-neutral-800/80 rounded-xl p-3 space-y-2.5 shadow-lg shadow-black/20">
-                    <label class="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-emerald-400">
-                        📍 Tatort & Zeitraum
+                <div class="bg-[#121214] border border-neutral-800/80 rounded-xl p-3 space-y-2.5 shadow-sm">
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-emerald-400">
+                        Tatort & Zeitraum
                     </label>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-                        <div class="md:col-span-2">
-                            <label class="block text-[10px] text-neutral-400 mb-0.5">Ort</label>
-                            <select v-model="selectedOrt" @change="handleOrtChange" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2 text-xs focus:border-emerald-500 transition-all">
-                                <option v-for="o in ortePreset" :key="o.name" :value="o.name">{{ o.name }}</option>
-                            </select>
+                    <div>
+                        <label class="block text-[10px] text-neutral-400 mb-1">Ort</label>
+                        <select v-model="selectedOrt" @change="handleOrtChange" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all">
+                            <option v-for="o in ortePreset" :key="o.name" :value="o.name">{{ o.name }}</option>
+                        </select>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
+                        <div>
+                            <label class="block text-[10px] text-neutral-400 mb-1">PLZ</label>
+                            <input v-model="form.plz" type="text" placeholder="PLZ" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
                         </div>
                         <div>
-                            <label class="block text-[10px] text-neutral-400 mb-0.5">PLZ</label>
-                            <input v-model="form.plz" type="text" placeholder="PLZ" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2 text-xs focus:border-emerald-500 transition-all" />
+                            <label class="block text-[10px] text-neutral-400 mb-1">Datum</label>
+                            <input v-model="form.datum" type="text" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
                         </div>
                     </div>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
                         <div>
-                            <label class="block text-[10px] text-neutral-400 mb-0.5">Datum</label>
-                            <input v-model="form.datum" type="text" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2 text-xs focus:border-emerald-500 transition-all" />
-                        </div>
-                        <div>
-                            <label class="block text-[10px] text-neutral-400 mb-0.5">Beginn</label>
-                            <input v-model="form.beginnZeit" type="text" placeholder="HH:MM" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2 text-xs focus:border-emerald-500 transition-all" />
+                            <label class="block text-[10px] text-neutral-400 mb-1">Beginn</label>
+                            <input v-model="form.beginnZeit" type="text" placeholder="HH:MM" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
                         </div>
                         <div v-if="form.aktenart !== 'Fahndung'">
-                            <label class="block text-[10px] text-neutral-400 mb-0.5">Ende</label>
-                            <input v-model="form.endeZeit" type="text" placeholder="HH:MM" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2 text-xs focus:border-emerald-500 transition-all" />
+                            <label class="block text-[10px] text-neutral-400 mb-1">Ende</label>
+                            <input v-model="form.endeZeit" type="text" placeholder="HH:MM" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
                         </div>
                     </div>
                 </div>
 
                 <!-- 3. Beschuldigte / TV Status -->
-                <div class="bg-neutral-900/60 border border-neutral-800/80 rounded-xl p-3 space-y-2.5 shadow-lg shadow-black/20">
-                    <label class="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-emerald-400">
-                        👥 Beschuldigte / TV
+                <div class="bg-[#121214] border border-neutral-800/80 rounded-xl p-3 space-y-2.5 shadow-sm">
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-emerald-400">
+                        Beschuldigte / TV
                     </label>
 
-                    <div v-if="form.aktenart === 'Kollektivschnellakte'" class="flex items-center justify-between p-2.5 bg-neutral-950 border border-neutral-800 rounded-lg">
+                    <div v-if="form.aktenart === 'Kollektivschnellakte'" class="flex items-center justify-between p-2 bg-[#18181b] border border-neutral-800 rounded-lg">
                         <span class="text-xs text-neutral-300">Akte nach altem Verfahren</span>
-                        <button @click="form.altesVerfahren = !form.altesVerfahren" :class="[form.altesVerfahren ? 'bg-emerald-500' : 'bg-neutral-700', 'w-9 h-4.5 rounded-full p-0.5 transition-colors relative']">
-                            <div :class="[form.altesVerfahren ? 'translate-x-4.5' : 'translate-x-0', 'w-3.5 h-3.5 bg-white rounded-full transition-transform']"></div>
+                        <button @click="form.altesVerfahren = !form.altesVerfahren" :class="[form.altesVerfahren ? 'bg-emerald-500' : 'bg-neutral-700', 'w-8 h-4 rounded-full p-0.5 transition-colors relative']">
+                            <div :class="[form.altesVerfahren ? 'translate-x-4' : 'translate-x-0', 'w-3 h-3 bg-white rounded-full transition-transform']"></div>
                         </button>
                     </div>
 
@@ -128,137 +128,137 @@
                                 :class="[
                                     'flex-1 py-1.5 rounded-lg border text-xs font-medium transition-all',
                                     form.tvGender === status 
-                                        ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400 shadow-md shadow-emerald-950/40' 
-                                        : 'bg-neutral-950 border-neutral-800 text-neutral-400 hover:border-neutral-700'
+                                        ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400 shadow-sm' 
+                                        : 'bg-[#18181b] border-neutral-800 text-neutral-400 hover:border-neutral-700'
                                 ]">
                             {{ status }}
                         </button>
                     </div>
 
-                    <div v-if="(!isKollektiv && form.tvGender !== 'Mehrere') || (form.aktenart === 'Kollektivschnellakte' && form.altesVerfahren)" class="space-y-1.5">
+                    <div v-if="(!isKollektiv && form.tvGender !== 'Mehrere') || (form.aktenart === 'Kollektivschnellakte' && form.altesVerfahren)" class="space-y-1">
                         <div>
-                            <label class="block text-[10px] text-neutral-400 mb-0.5">Abgenommene Gegenstände</label>
-                            <textarea v-model="singleGegenstaende" rows="2" placeholder="Liste der abgenommenen Gegenstände" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2 text-xs focus:border-emerald-500 transition-all"></textarea>
+                            <label class="block text-[10px] text-neutral-400 mb-1">Abgenommene Gegenstände</label>
+                            <textarea v-model="singleGegenstaende" rows="2" placeholder="Liste der abgenommenen Gegenstände" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all"></textarea>
                         </div>
                     </div>
 
                     <div v-else class="space-y-2">
-                        <div v-for="(tv, idx) in form.tvs" :key="idx" class="p-2.5 bg-neutral-950 border border-neutral-800 rounded-lg space-y-1.5">
+                        <div v-for="(tv, idx) in form.tvs" :key="idx" class="p-2.5 bg-[#18181b] border border-neutral-800 rounded-lg space-y-1.5">
                             <div class="flex justify-between items-center">
                                 <span class="text-[10px] font-semibold text-emerald-400">Tatverdächtiger {{ idx + 1 }}</span>
                                 <button v-if="form.tvs.length > 1" @click="removeTV(idx)" class="text-[10px] text-red-400 hover:underline">Entfernen</button>
                             </div>
-                            <input v-model="tv.daten" type="text" placeholder="Vorname Nachname, Geb.: DD.MM.YYYY" class="w-full bg-neutral-900 border border-neutral-800 rounded-lg p-1.5 text-xs focus:border-emerald-500 transition-all" />
-                            <textarea v-model="tv.gegenstaende" rows="2" placeholder="Gegenstände..." class="w-full bg-neutral-900 border border-neutral-800 rounded-lg p-1.5 text-xs focus:border-emerald-500 transition-all"></textarea>
+                            <input v-model="tv.daten" type="text" placeholder="Vorname Nachname, Geb.: DD.MM.YYYY" class="w-full bg-[#121214] border border-neutral-800 rounded-lg p-1.5 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
+                            <textarea v-model="tv.gegenstaende" rows="2" placeholder="Gegenstände..." class="w-full bg-[#121214] border border-neutral-800 rounded-lg p-1.5 text-xs text-neutral-100 focus:border-emerald-500 transition-all"></textarea>
                         </div>
-                        <button @click="addTV" class="w-full py-1.5 bg-neutral-950 hover:bg-neutral-900 border border-dashed border-neutral-700 text-[11px] text-neutral-300 rounded-lg transition-colors flex items-center justify-center gap-1.5">
+                        <button @click="addTV" class="w-full py-1.5 bg-[#18181b] hover:bg-neutral-900 border border-dashed border-neutral-700 text-[11px] text-neutral-300 rounded-lg transition-colors flex items-center justify-center gap-1.5">
                             + weiteren TV hinzufügen
                         </button>
                     </div>
                 </div>
 
                 <!-- 4. Dynamische Zusatzfelder -->
-                <div v-if="hasSachverhalt || form.aktenart === 'Fahndung' || isKollektiv" class="bg-neutral-900/60 border border-neutral-800/80 rounded-xl p-3 space-y-2.5 shadow-lg shadow-black/20">
-                    <label class="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-emerald-400">
-                        📝 Spezifische Angaben
+                <div v-if="hasSachverhalt || form.aktenart === 'Fahndung' || isKollektiv" class="bg-[#121214] border border-neutral-800/80 rounded-xl p-3 space-y-2.5 shadow-sm">
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-emerald-400">
+                        Spezifische Angaben
                     </label>
 
                     <div v-if="hasSachverhalt">
-                        <label class="block text-[10px] text-neutral-400 mb-0.5">Sachverhalt aus Sicht des SERTs</label>
-                        <textarea v-model="form.sachverhalt" rows="2" placeholder="Angaben zum Sachverhalt..." class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2 text-xs focus:border-emerald-500 transition-all"></textarea>
+                        <label class="block text-[10px] text-neutral-400 mb-1">Sachverhalt aus Sicht des SERTs</label>
+                        <textarea v-model="form.sachverhalt" rows="2" placeholder="Angaben zum Sachverhalt..." class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all"></textarea>
                     </div>
 
                     <template v-if="form.aktenart === 'Fahndung'">
                         <div>
-                            <label class="block text-[10px] text-neutral-400 mb-0.5">Grund der Fahndung</label>
-                            <textarea v-model="form.fahndungGrund" rows="2" placeholder="Begründung..." class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2 text-xs focus:border-emerald-500 transition-all"></textarea>
+                            <label class="block text-[10px] text-neutral-400 mb-1">Grund der Fahndung</label>
+                            <textarea v-model="form.fahndungGrund" rows="2" placeholder="Begründung..." class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all"></textarea>
                         </div>
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-[10px] text-neutral-400 mb-0.5">Verknüpfte Akte</label>
-                                <input v-model="form.verknuepfteAkte" type="text" placeholder="Name der Akte" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2 text-xs focus:border-emerald-500 transition-all" />
+                                <label class="block text-[10px] text-neutral-400 mb-1">Verknüpfte Akte</label>
+                                <input v-model="form.verknuepfteAkte" type="text" placeholder="Name der Akte" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
                             </div>
                             <div>
-                                <label class="block text-[10px] text-neutral-400 mb-0.5">Fall-ID</label>
-                                <input v-model="form.fallId" type="text" placeholder="123" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2 text-xs focus:border-emerald-500 transition-all" />
+                                <label class="block text-[10px] text-neutral-400 mb-1">Fall-ID</label>
+                                <input v-model="form.fallId" type="text" placeholder="123" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
                             </div>
                         </div>
                         <div>
-                            <label class="block text-[10px] text-neutral-400 mb-0.5">Zweck der Fahndung</label>
-                            <input v-model="form.fahndungZweck" type="text" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2 text-xs focus:border-emerald-500 transition-all" />
+                            <label class="block text-[10px] text-neutral-400 mb-1">Zweck der Fahndung</label>
+                            <input v-model="form.fahndungZweck" type="text" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
                         </div>
                     </template>
 
                     <template v-if="isKollektiv">
                         <div class="grid grid-cols-2 gap-2">
                             <div>
-                                <label class="block text-[10px] text-neutral-400 mb-0.5">Genehmigt Dienstnummer</label>
-                                <input v-model="form.genehmigtDienstnummer" type="text" placeholder="SD-01" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2 text-xs focus:border-emerald-500 transition-all" />
+                                <label class="block text-[10px] text-neutral-400 mb-1">Genehmigt Dienstnummer</label>
+                                <input v-model="form.genehmigtDienstnummer" type="text" placeholder="SD-01" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
                             </div>
                             <div>
-                                <label class="block text-[10px] text-neutral-400 mb-0.5">Uhrzeit der Genehmigung</label>
-                                <input v-model="form.genehmigtUhrzeit" type="text" placeholder="15:30" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2 text-xs focus:border-emerald-500 transition-all" />
+                                <label class="block text-[10px] text-neutral-400 mb-1">Uhrzeit der Genehmigung</label>
+                                <input v-model="form.genehmigtUhrzeit" type="text" placeholder="15:30" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
                             </div>
                         </div>
                     </template>
                 </div>
 
                 <!-- 5. Rechte, Richter, Anwalt & Medizin -->
-                <div class="bg-neutral-900/60 border border-neutral-800/80 rounded-xl p-3 space-y-2.5 shadow-lg shadow-black/20">
-                    <label class="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-emerald-400">
-                        ⚖️ Protokoll & Rechte
+                <div class="bg-[#121214] border border-neutral-800/80 rounded-xl p-3 space-y-2.5 shadow-sm">
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-emerald-400">
+                        Rechte, Richter, Anwalt & Medizin
                     </label>
 
                     <div class="grid grid-cols-2 gap-2">
                         <div>
-                            <label class="block text-[10px] text-neutral-400 mb-0.5">Rechte verlesen von (DN)</label>
-                            <input v-model="form.rechteDN" type="text" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2 text-xs focus:border-emerald-500 transition-all" />
+                            <label class="block text-[10px] text-neutral-400 mb-1">Rechte verlesen von (DN)</label>
+                            <input v-model="form.rechteDN" type="text" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
                         </div>
                         <div>
-                            <label class="block text-[10px] text-neutral-400 mb-0.5">Zeuge (DN)</label>
-                            <input v-model="form.zeugeDN" type="text" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2 text-xs focus:border-emerald-500 transition-all" />
+                            <label class="block text-[10px] text-neutral-400 mb-1">Zeuge (DN)</label>
+                            <input v-model="form.zeugeDN" type="text" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
                         </div>
                     </div>
 
                     <div class="space-y-2 pt-0.5">
-                        <div class="flex items-center justify-between p-2.5 bg-neutral-950 border border-neutral-800 rounded-lg">
-                            <span class="text-xs">Ist ein Richter anwesend?</span>
+                        <div class="flex items-center justify-between p-2.5 bg-[#18181b] border border-neutral-800 rounded-lg">
+                            <span class="text-xs text-neutral-300">Ist ein Richter anwesend?</span>
                             <div class="flex items-center gap-2">
-                                <input v-if="!form.richterDa" v-model="form.richterBestaerktDurch" type="text" class="bg-neutral-900 border border-neutral-800 rounded-md p-1 text-[11px] text-neutral-300 w-32 focus:border-emerald-500 transition-all" />
-                                <button @click="form.richterDa = !form.richterDa" :class="[form.richterDa ? 'bg-emerald-500' : 'bg-neutral-700', 'w-9 h-4.5 rounded-full p-0.5 transition-colors relative']">
-                                    <div :class="[form.richterDa ? 'translate-x-4.5' : 'translate-x-0', 'w-3.5 h-3.5 bg-white rounded-full transition-transform']"></div>
+                                <input v-if="!form.richterDa" v-model="form.richterBestaerktDurch" type="text" class="bg-[#121214] border border-neutral-800 rounded-md p-1 text-[11px] text-neutral-300 w-32 focus:border-emerald-500 transition-all" />
+                                <button @click="form.richterDa = !form.richterDa" :class="[form.richterDa ? 'bg-emerald-500' : 'bg-neutral-700', 'w-8 h-4 rounded-full p-0.5 transition-colors relative']">
+                                    <div :class="[form.richterDa ? 'translate-x-4' : 'translate-x-0', 'w-3 h-3 bg-white rounded-full transition-transform']"></div>
                                 </button>
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-between p-2.5 bg-neutral-950 border border-neutral-800 rounded-lg">
-                            <span class="text-xs">Anwalt gefordert?</span>
+                        <div class="flex items-center justify-between p-2.5 bg-[#18181b] border border-neutral-800 rounded-lg">
+                            <span class="text-xs text-neutral-300">Anwalt gefordert?</span>
                             <div class="flex items-center gap-2">
-                                <input v-if="form.anwaltGefordert" v-model="form.anwaltBestaerktDurch" type="text" class="bg-neutral-900 border border-neutral-800 rounded-md p-1 text-[11px] text-neutral-300 w-32 focus:border-emerald-500 transition-all" />
-                                <button @click="form.anwaltGefordert = !form.anwaltGefordert" :class="[form.anwaltGefordert ? 'bg-emerald-500' : 'bg-neutral-700', 'w-9 h-4.5 rounded-full p-0.5 transition-colors relative']">
-                                    <div :class="[form.anwaltGefordert ? 'translate-x-4.5' : 'translate-x-0', 'w-3.5 h-3.5 bg-white rounded-full transition-transform']"></div>
+                                <input v-if="form.anwaltGefordert" v-model="form.anwaltBestaerktDurch" type="text" class="bg-[#121214] border border-neutral-800 rounded-md p-1 text-[11px] text-neutral-300 w-32 focus:border-emerald-500 transition-all" />
+                                <button @click="form.anwaltGefordert = !form.anwaltGefordert" :class="[form.anwaltGefordert ? 'bg-emerald-500' : 'bg-neutral-700', 'w-8 h-4 rounded-full p-0.5 transition-colors relative']">
+                                    <div :class="[form.anwaltGefordert ? 'translate-x-4' : 'translate-x-0', 'w-3 h-3 bg-white rounded-full transition-transform']"></div>
                                 </button>
                             </div>
                         </div>
 
-                        <div class="flex items-center justify-between p-2.5 bg-neutral-950 border border-neutral-800 rounded-lg">
-                            <span class="text-xs">Medizinische Behandlung benötigt?</span>
-                            <button @click="form.medizinBenoetigt = !form.medizinBenoetigt" :class="[form.medizinBenoetigt ? 'bg-emerald-500' : 'bg-neutral-700', 'w-9 h-4.5 rounded-full p-0.5 transition-colors relative']">
-                                <div :class="[form.medizinBenoetigt ? 'translate-x-4.5' : 'translate-x-0', 'w-3.5 h-3.5 bg-white rounded-full transition-transform']"></div>
+                        <div class="flex items-center justify-between p-2.5 bg-[#18181b] border border-neutral-800 rounded-lg">
+                            <span class="text-xs text-neutral-300">Medizinische Behandlung benötigt?</span>
+                            <button @click="form.medizinBenoetigt = !form.medizinBenoetigt" :class="[form.medizinBenoetigt ? 'bg-emerald-500' : 'bg-neutral-700', 'w-8 h-4 rounded-full p-0.5 transition-colors relative']">
+                                <div :class="[form.medizinBenoetigt ? 'translate-x-4' : 'translate-x-0', 'w-3 h-3 bg-white rounded-full transition-transform']"></div>
                             </button>
                         </div>
                     </div>
                 </div>
 
                 <!-- 6. Gezeichnet von -->
-                <div class="bg-neutral-900/60 border border-neutral-800/80 rounded-xl p-3 space-y-1.5 shadow-lg shadow-black/20">
-                    <label class="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-emerald-400">
-                        ✍️ Gezeichnet Von
+                <div class="bg-[#121214] border border-neutral-800/80 rounded-xl p-3 space-y-2 shadow-sm">
+                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-emerald-400">
+                        Gezeichnet Von
                     </label>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-                        <input v-model="form.zeichnerName" type="text" placeholder="Codename" class="bg-neutral-950 border border-neutral-800 rounded-lg p-2 text-xs focus:border-emerald-500 transition-all" />
-                        <input v-model="form.zeichnerDN" type="text" placeholder="Dienstnummer" class="bg-neutral-950 border border-neutral-800 rounded-lg p-2 text-xs focus:border-emerald-500 transition-all" />
-                        <select v-model="form.zeichnerRang" class="bg-neutral-950 border border-neutral-800 rounded-lg p-2 text-xs focus:border-emerald-500 transition-all">
+                        <input v-model="form.zeichnerName" type="text" placeholder="Codename" class="bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
+                        <input v-model="form.zeichnerDN" type="text" placeholder="Dienstnummer" class="bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
+                        <select v-model="form.zeichnerRang" class="bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all">
                             <option v-for="rang in raenge" :key="rang" :value="rang">{{ rang }}</option>
                         </select>
                     </div>
@@ -268,17 +268,17 @@
 
             <!-- RIGHT COLUMN: Live Document Preview -->
             <section class="lg:col-span-5 flex flex-col h-full">
-                <div class="sticky top-3 bg-neutral-900 border border-neutral-800/80 rounded-xl p-3 flex flex-col flex-grow shadow-xl shadow-black/40">
+                <div class="sticky top-3 bg-[#121214] border border-neutral-800/80 rounded-xl p-3 flex flex-col flex-grow shadow-sm">
                     <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-neutral-800">
-                        <div class="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-neutral-300">
-                            👁️ Live-Vorschau
+                        <div class="text-[11px] font-semibold uppercase tracking-wider text-neutral-300">
+                            Live-Vorschau
                         </div>
-                        <button @click="copyToClipboard" class="flex items-center gap-1.5 px-3 py-1 bg-emerald-500 hover:bg-emerald-600 text-black font-semibold text-xs rounded-lg transition-all shadow-md shadow-emerald-950/50">
+                        <button @click="copyToClipboard" class="flex items-center gap-1.5 px-3 py-1 bg-emerald-500 hover:bg-emerald-600 text-black font-semibold text-xs rounded-lg transition-all shadow-sm">
                             {{ copied ? 'Kopiert!' : 'Akte kopieren' }}
                         </button>
                     </div>
 
-                    <div class="flex-grow bg-neutral-950 border border-neutral-800/80 rounded-lg p-3 font-mono text-[10.5px] text-neutral-300 whitespace-pre-wrap overflow-y-auto leading-relaxed select-all max-h-[75vh]">
+                    <div class="flex-grow bg-[#09090b] border border-neutral-800/80 rounded-lg p-3 font-mono text-[10.5px] text-neutral-300 whitespace-pre-wrap overflow-y-auto leading-relaxed select-all max-h-[75vh]">
                         {{ generatedText }}
                     </div>
                 </div>
@@ -302,15 +302,15 @@
                 const copied = ref(false);
 
                 const ortePreset = [
-                    { name: 'Hoover Laden PLZ 7326', plz: '7326' },
-                    { name: 'Westhighway Laden PLZ 5067', plz: '5067' },
-                    { name: 'Laden 1000, PLZ 1000', plz: '1000' },
-                    { name: 'Laden 1012, PLZ 1012', plz: '1012' },
-                    { name: 'Vespucci PD, PLZ 8090', plz: '8090' },
-                    { name: 'Staatsbank PLZ 7090', plz: '7090' },
-                    { name: 'Roxwoodbank PLZ 988', plz: '988' },
-                    { name: 'Juwelier PLZ 7251', plz: '7251' },
-                    { name: 'Staatsgefängnis PLZ 4000', plz: '4000' },
+                    { name: 'Hoover Laden', plz: '7326' },
+                    { name: 'Westhighway Laden', plz: '5067' },
+                    { name: 'Laden 1000', plz: '1000' },
+                    { name: 'Laden 1012', plz: '1012' },
+                    { name: 'Vespucci PD', plz: '8090' },
+                    { name: 'Staatsbank', plz: '7090' },
+                    { name: 'Roxwoodbank', plz: '988' },
+                    { name: 'Juwelier', plz: '7251' },
+                    { name: 'Staatsgefängnis', plz: '4000' },
                     { name: 'Freie Eingabe...', plz: '' }
                 ];
 
@@ -322,7 +322,7 @@
                     'Undersheriff', 'Sheriff'
                 ];
 
-                const selectedOrt = ref('Hoover Laden PLZ 7326');
+                const selectedOrt = ref('Hoover Laden');
                 const singleGegenstaende = ref('');
 
                 const form = ref({
@@ -431,7 +431,7 @@
                         }
                     }
 
-                    body += `| Gezeichnet von:|\n${form.value.zeichnerName || 'Codename'} | ${form.value.zeichnerDN || 'DN'} | ${form.value.zeichnerRang}`;
+                    body += `| Gezeichnet von:|\n| ${form.value.zeichnerName || 'Codename'} | ${form.value.zeichnerDN || 'DN'} | ${form.value.zeichnerRang}`;
 
                     return header + body;
                 });
