@@ -99,10 +99,18 @@
         
         <!-- Schalter für Kollektivschnellakte: Altes Verfahren -->
         <template x-if="aktenart === 'Kollektivschnellakte'">
-          <button type="button" @click="kollektivAltesVerfahren = !kollektivAltesVerfahren" class="w-full flex items-center justify-between rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2.5 text-left mb-2">
-            <span class="text-sm text-neutral-200">Akte nach altem Verfahren</span>
-            <span :class="kollektivAltesVerfahren ? 'bg-emerald-500' : 'bg-neutral-700'" class="relative inline-flex h-6 w-11 items-center rounded-full transition"><span :class="kollektivAltesVerfahren ? 'translate-x-5' : 'translate-x-0.5'" class="inline-block h-5 w-5 transform rounded-full bg-white transition"></span></span>
-          </button>
+          <div class="space-y-3 mb-2">
+            <button type="button" @click="kollektivAltesVerfahren = !kollektivAltesVerfahren" class="w-full flex items-center justify-between rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2.5 text-left">
+              <span class="text-sm text-neutral-200">Akte nach altem Verfahren</span>
+              <span :class="kollektivAltesVerfahren ? 'bg-emerald-500' : 'bg-neutral-700'" class="relative inline-flex h-6 w-11 items-center rounded-full transition"><span :class="kollektivAltesVerfahren ? 'translate-x-5' : 'translate-x-0.5'" class="inline-block h-5 w-5 transform rounded-full bg-white transition"></span></span>
+            </button>
+            <template x-if="kollektivAltesVerfahren">
+              <label class="block space-y-1.5">
+                <span class="text-xs text-neutral-400">Genehmigt durch (Dienstnummer)</span>
+                <input type="text" x-model="kollAltesGenehmigtVon" placeholder="z.B. SD-01" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none">
+              </label>
+            </template>
+          </div>
         </template>
 
         <template x-if="!isKollektiv">
@@ -158,8 +166,8 @@
         </div>
       </template>
 
-      <!-- Kollektiv Genehmigung -->
-      <template x-if="isKollektiv">
+      <!-- Kollektiv Genehmigung (nur wenn nicht altes Verfahren) -->
+      <template x-if="isKollektiv && !(aktenart === 'Kollektivschnellakte' && kollektivAltesVerfahren)">
         <div class="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5 space-y-3">
           <h2 class="text-xs uppercase tracking-[0.2em] text-emerald-400/80">Kollektiv-Genehmigung</h2>
           <div class="grid grid-cols-2 gap-3">
@@ -278,6 +286,7 @@
         kollGenehmigtVon: "",
         kollGenehmigtUhrzeit: "",
         kollektivAltesVerfahren: false,
+        kollAltesGenehmigtVon: "",
         rechteVon: "",
         rechteZeuge: "",
         richterAnwesend: true,
@@ -342,7 +351,7 @@
           if (this.isKollektiv) {
             if (this.aktenart === 'Kollektivschnellakte' && this.kollektivAltesVerfahren) {
               const gegenstaendeBlock = this.einzelGegenstaende || '-';
-              const genehmigung = `| Genehmigung:|\nKollektivakte genehmigt von ${this.kollGenehmigtVon || '-'} um ${this.kollGenehmigtUhrzeit || '-'} Uhr.`;
+              const genehmigung = `| Genehmigung:|\nKollektivakte nach altem Recht genehmigt von: ${this.kollAltesGenehmigtVon || '-'}`;
               return `${header}\n\n${tatort}${sachverhaltBlock}\n\n| Abgenommene Gegenstände:|\n${gegenstaendeBlock}\n\n${genehmigung}\n\n| Bemerkungen:|\n${bemerkungenLines}\n\n${signBlock}`;
             }
 
