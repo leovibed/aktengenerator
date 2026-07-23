@@ -32,9 +32,10 @@
         
         <!-- Header -->
         <header class="mb-6 flex items-center justify-between border-b border-neutral-800 pb-4">
-            <div class="flex items-center gap-3">
-                <div class="p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-emerald-400">
-                    <svg class="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/></svg>
+            <div class="flex items-center gap-4">
+                <!-- LOGO BEREICH -->
+                <div class="w-14 h-14 flex items-center justify-center bg-white rounded-full p-1 shadow-lg shadow-emerald-500/10 border border-neutral-700 overflow-hidden flex-shrink-0">
+                    <img src="SERT.jpg" alt="SERT Logo" class="w-full h-full object-contain">
                 </div>
                 <div>
                     <h1 class="text-xl font-bold tracking-wide uppercase text-neutral-100">Narco County Sheriff Department</h1>
@@ -47,10 +48,10 @@
             </div>
         </header>
 
-        <!-- Main Content (2-Column Grid) -->
+        <!-- Main Content -->
         <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow">
             
-            <!-- LEFT COLUMN: Form Controls (7 Cols) -->
+            <!-- LEFT COLUMN: Form Controls -->
             <section class="lg:col-span-7 space-y-6">
                 
                 <!-- 1. Aktenart -->
@@ -104,7 +105,16 @@
                     <label class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-emerald-400">
                         👥 Beschuldigte / TV
                     </label>
-                    <div class="flex gap-2">
+
+                    <!-- Schalter für altes Verfahren (nur bei Kollektivschnellakte) -->
+                    <div v-if="form.aktenart === 'Kollektivschnellakte'" class="flex items-center justify-between p-3 bg-neutral-950 border border-neutral-800 rounded-lg">
+                        <span class="text-sm font-medium text-neutral-300">Akte nach altem Verfahren</span>
+                        <button @click="form.altesVerfahren = !form.altesVerfahren" :class="[form.altesVerfahren ? 'bg-emerald-500' : 'bg-neutral-700', 'w-12 h-6 rounded-full p-1 transition-colors relative']">
+                            <div :class="[form.altesVerfahren ? 'translate-x-6' : 'translate-x-0', 'w-4 h-4 bg-white rounded-full transition-transform']"></div>
+                        </button>
+                    </div>
+
+                    <div v-if="!(form.aktenart === 'Kollektivschnellakte' && form.altesVerfahren)" class="flex gap-2">
                         <button v-for="status in ['Männlich', 'Weiblich', 'Mehrere']" 
                                 :key="status"
                                 @click="form.tvGender = status"
@@ -118,8 +128,8 @@
                         </button>
                     </div>
 
-                    <!-- Single TV Input -->
-                    <div v-if="!isKollektiv && form.tvGender !== 'Mehrere'" class="space-y-3">
+                    <!-- Single TV Input (Oder altes Verfahren) -->
+                    <div v-if="(!isKollektiv && form.tvGender !== 'Mehrere') || (form.aktenart === 'Kollektivschnellakte' && form.altesVerfahren)" class="space-y-3">
                         <div>
                             <label class="block text-xs text-neutral-400 mb-1">Abgenommene Gegenstände</label>
                             <textarea v-model="singleGegenstaende" rows="3" placeholder="1x Pistole&#10;1x Smartphone" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-sm focus:border-emerald-500"></textarea>
@@ -248,7 +258,7 @@
                         ✍️ Gezeichnet Von
                     </label>
                     <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
-                        <input v-model="form.zeichnerName" type="text" placeholder="Name" class="bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-sm focus:border-emerald-500" />
+                        <input v-model="form.zeichnerName" type="text" placeholder="Codename" class="bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-sm focus:border-emerald-500" />
                         <input v-model="form.zeichnerDN" type="text" placeholder="Dienstnummer" class="bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-sm focus:border-emerald-500" />
                         <select v-model="form.zeichnerRang" class="bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-sm focus:border-emerald-500">
                             <option v-for="rang in raenge" :key="rang" :value="rang">{{ rang }}</option>
@@ -258,7 +268,7 @@
 
             </section>
 
-            <!-- RIGHT COLUMN: Live Document Preview (5 Cols) -->
+            <!-- RIGHT COLUMN: Live Document Preview -->
             <section class="lg:col-span-5 flex flex-col h-full">
                 <div class="sticky top-6 bg-neutral-900 border border-neutral-800 rounded-xl p-5 flex flex-col flex-grow shadow-2xl">
                     <div class="flex items-center justify-between pb-4 mb-4 border-b border-neutral-800">
@@ -316,7 +326,7 @@
                 ];
 
                 const selectedOrt = ref('Hoover Laden PLZ 7326');
-                const singleGegenstaende = ref('1x Pistole\n1x Smartphone');
+                const singleGegenstaende = ref('');
 
                 // Form State
                 const form = ref({
@@ -327,6 +337,7 @@
                     beginnZeit: 'XX:XX',
                     endeZeit: 'XX:XX',
                     tvGender: 'Männlich',
+                    altesVerfahren: false,
                     tvs: [
                         { daten: 'Vorname Nachname, Geb.: XX.XX.XXXX', gegenstaende: 'Keine' }
                     ],
@@ -344,7 +355,7 @@
                     anwaltGefordert: true,
                     anwaltBestaerktDurch: 'DIENSTNUMMER',
                     medizinBenoetigt: false,
-                    zeichnerName: 'Leo Delpiero',
+                    zeichnerName: '', 
                     zeichnerDN: 'SD-61',
                     zeichnerRang: 'Senior Deputy'
                 });
@@ -377,13 +388,14 @@
 
                 // Computed Text Generator
                 const generatedText = computed(() => {
-                    const header = `⭐ NARCO COUNTY SHERIFF DEPARTMENT ⭐\n       | - Special Emergency Response Team - |\n\n`;
+                    const header = `⭐ NARCO COUNTY SHERIFF DEPARTMENT ⭐\n| - Special Emergency Response Team - |\n\n`;
                     let body = `| Tatort und Zeitraum:|\n${form.value.ortText}${form.value.plz ? ' PLZ ' + form.value.plz : ''}\n`;
 
+                    // "Uhr" Zusätze hinzugefügt
                     if (form.value.aktenart === 'Fahndung') {
-                        body += `Am ${form.value.datum} um ${form.value.beginnZeit}\n\n`;
+                        body += `Am ${form.value.datum} um ${form.value.beginnZeit} Uhr\n\n`;
                     } else {
-                        body += `Am ${form.value.datum} von ${form.value.beginnZeit} bis ${form.value.endeZeit}\n\n`;
+                        body += `Am ${form.value.datum} von ${form.value.beginnZeit} Uhr bis ${form.value.endeZeit} Uhr\n\n`;
                     }
 
                     // Sachverhalt
@@ -391,24 +403,29 @@
                         body += `| Sachverhalt aus Sicht des SERTs: |\n${form.value.sachverhalt || 'Angaben zum Sachverhalt'}\n\n`;
                     }
 
+                    // Altes Verfahren Check
+                    const useAltesVerfahren = form.value.aktenart === 'Kollektivschnellakte' && form.value.altesVerfahren;
+
                     // TVs / Gegenstände
                     if (form.value.aktenart === 'Fahndung') {
                         body += `| Grund der Fahndung: |\n${form.value.fahndungGrund}\n\n`;
                         body += `| Verknüpfte Akte: |\n[${form.value.verknuepfteAkte}]  |  Fall-ID: [${form.value.fallId}]\n\n`;
-                    } else if (isKollektiv.value || form.value.tvGender === 'Mehrere') {
+                    } else if ((isKollektiv.value && !useAltesVerfahren) || form.value.tvGender === 'Mehrere') {
                         form.value.tvs.forEach((tv, idx) => {
                             body += `| Tatverdächtiger ${idx + 1}:|\n${tv.daten || 'Vorname Nachname, Geb.: XX.XX.XXXX'}\nAbgenommene Gegenstände:\n${tv.gegenstaende || 'Keine'}\n\n`;
                         });
                         if (isKollektiv.value && form.value.genehmigtDienstnummer) {
-                            body += `| Genehmigung:|\nKollektivakte genehmigt von ${form.value.genehmigtDienstnummer} um ${form.value.genehmigtUhrzeit || 'XX:XX'} Uhr.\n\n`;
+                            // "Uhr" Zusatz bei Genehmigung
+                            body += `| Genehmigung:|\nKollektivakte genehmigt von ${form.value.genehmigtDienstnummer} um ${form.value.genehmigtUhrzeit || 'XX:XX'} Uhr\n\n`;
                         }
                     } else {
+                        // Bei Single TV oder Kollektivschnellakte (Altes Verfahren)
                         body += `| Abgenommene Gegenstände:|\n${singleGegenstaende.value || 'Keine'}\n\n`;
                     }
 
                     // Bemerkungen
                     body += `| Bemerkungen:|\n`;
-                    const plural = isKollektiv.value || form.value.tvGender === 'Mehrere';
+                    const plural = (isKollektiv.value && !useAltesVerfahren) || form.value.tvGender === 'Mehrere';
                     
                     body += `Die Rechte wurden ${plural ? 'den Beschuldigten' : 'dem Beschuldigten'} durch ${form.value.rechteDN || 'DIENSTNUMMER'} im Beisein von ${form.value.zeugeDN || 'DIENSTNUMMER'} verlesen und verstanden.\n`;
 
@@ -427,7 +444,7 @@
                     }
 
                     // Gezeichnet
-                    body += `| Gezeichnet von:|\n${form.value.zeichnerName || 'Name'} | ${form.value.zeichnerDN || 'DN'} | ${form.value.zeichnerRang}`;
+                    body += `| Gezeichnet von:|\n${form.value.zeichnerName || 'Codename'} | ${form.value.zeichnerDN || 'DN'} | ${form.value.zeichnerRang}`;
 
                     return header + body;
                 });
