@@ -1,464 +1,354 @@
 <!DOCTYPE html>
 <html lang="de" class="dark">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aktengenerator | Narco County Sheriff Department</title>
-    <!-- Favicon -->
-    <link rel="icon" type="image/jpeg" href="SERT.jpg">
-    <!-- Tailwind CSS CDN -->
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    colors: {
-                        emerald: {
-                            400: '#34d399',
-                            500: '#10b981',
-                            600: '#059669',
-                            950: '#022c22',
-                        }
-                    },
-                    borderRadius: {
-                        'xl': '0.75rem',
-                        '2xl': '1rem',
-                    }
-                }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aktengenerator | Narco County Sheriff Department</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            emerald: {
+              400: '#34d399',
+              500: '#10b981',
+              600: '#059669',
+              950: '#022c22',
             }
+          }
         }
-    </script>
-    <!-- Vue 3 CDN -->
-    <script src="https://unpkg.com/vue@3/dist/vue.global.prod.js"></script>
+      }
+    }
+  </script>
+  <!-- Alpine.js für Reaktivität -->
+  <script defer src="https://cdn.jsdelivr.5net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
 </head>
-<body class="bg-[#09090b] text-neutral-100 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-500 selection:text-black text-xs">
-
-    <div id="app" class="flex-grow flex flex-col p-3 md:p-4 max-w-[1450px] mx-auto w-full">
-        
-        <!-- Header -->
-        <header class="mb-3 flex items-center justify-between border-b border-neutral-800/80 pb-3">
-            <div class="flex items-center gap-2.5">
-                <!-- Lovable-Style Badge Logo -->
-                <div class="h-7 w-7 bg-emerald-950 border border-emerald-500/40 rounded-lg flex items-center justify-center flex-shrink-0 shadow-sm">
-                    <span class="text-emerald-400 text-xs">★</span>
-                </div>
-                <div>
-                    <h1 class="text-xs font-bold tracking-wide uppercase text-neutral-100">Narco County Sheriff Department</h1>
-                    <p class="text-[10px] text-emerald-500 font-medium">Special Emergency Response Team &bull; Aktengenerator</p>
-                </div>
-            </div>
-            <div class="hidden sm:block text-right text-[10px] font-mono text-neutral-500 leading-tight">
-                STATION ID: SD-61<br>
-                SYSTEM STATUS: ONLINE
-            </div>
-        </header>
-
-        <!-- Main Content -->
-        <main class="grid grid-cols-1 lg:grid-cols-12 gap-3.5 flex-grow">
-            
-            <!-- LEFT COLUMN: Form Controls -->
-            <section class="lg:col-span-7 space-y-3">
-                
-                <!-- 1. Aktenart -->
-                <div class="bg-[#121214] border border-neutral-800/80 rounded-xl p-3 space-y-2 shadow-sm">
-                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-emerald-400">
-                        Aktenart
-                    </label>
-                    <select v-model="form.aktenart" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:outline-none focus:border-emerald-500 transition-all">
-                        <option value="Schnellakte">Schnellakte</option>
-                        <option value="Strafakte">Strafakte</option>
-                        <option value="Kollektivschnellakte">Kollektivschnellakte</option>
-                        <option value="Kollektivakte">Kollektivakte</option>
-                        <option value="Bußgeldbescheid">Bußgeldbescheid</option>
-                        <option value="Fahndung">Fahndung</option>
-                    </select>
-                </div>
-
-                <!-- 2. Tatort & Zeitraum -->
-                <div class="bg-[#121214] border border-neutral-800/80 rounded-xl p-3 space-y-2.5 shadow-sm">
-                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-emerald-400">
-                        Tatort & Zeitraum
-                    </label>
-                    <div>
-                        <label class="block text-[10px] text-neutral-400 mb-1">Ort</label>
-                        <select v-model="selectedOrt" @change="handleOrtChange" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all">
-                            <option v-for="o in ortePreset" :key="o.name" :value="o.name">{{ o.name }}</option>
-                        </select>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-                        <div>
-                            <label class="block text-[10px] text-neutral-400 mb-1">PLZ</label>
-                            <input v-model="form.plz" type="text" placeholder="PLZ" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
-                        </div>
-                        <div>
-                            <label class="block text-[10px] text-neutral-400 mb-1">Datum</label>
-                            <input v-model="form.datum" type="text" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
-                        </div>
-                    </div>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-2.5">
-                        <div>
-                            <label class="block text-[10px] text-neutral-400 mb-1">Beginn</label>
-                            <input v-model="form.beginnZeit" type="text" placeholder="HH:MM" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
-                        </div>
-                        <div v-if="form.aktenart !== 'Fahndung'">
-                            <label class="block text-[10px] text-neutral-400 mb-1">Ende</label>
-                            <input v-model="form.endeZeit" type="text" placeholder="HH:MM" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 3. Beschuldigte / TV Status -->
-                <div class="bg-[#121214] border border-neutral-800/80 rounded-xl p-3 space-y-2.5 shadow-sm">
-                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-emerald-400">
-                        Beschuldigte / TV
-                    </label>
-
-                    <div v-if="form.aktenart === 'Kollektivschnellakte'" class="flex items-center justify-between p-2 bg-[#18181b] border border-neutral-800 rounded-lg">
-                        <span class="text-xs text-neutral-300">Akte nach altem Verfahren</span>
-                        <button @click="form.altesVerfahren = !form.altesVerfahren" :class="[form.altesVerfahren ? 'bg-emerald-500' : 'bg-neutral-700', 'w-8 h-4 rounded-full p-0.5 transition-colors relative']">
-                            <div :class="[form.altesVerfahren ? 'translate-x-4' : 'translate-x-0', 'w-3 h-3 bg-white rounded-full transition-transform']"></div>
-                        </button>
-                    </div>
-
-                    <div v-if="!(form.aktenart === 'Kollektivschnellakte' && form.altesVerfahren)" class="flex gap-2">
-                        <button v-for="status in ['Männlich', 'Weiblich', 'Mehrere']" 
-                                :key="status"
-                                @click="form.tvGender = status"
-                                :class="[
-                                    'flex-1 py-1.5 rounded-lg border text-xs font-medium transition-all',
-                                    form.tvGender === status 
-                                        ? 'bg-emerald-500/10 border-emerald-500 text-emerald-400 shadow-sm' 
-                                        : 'bg-[#18181b] border-neutral-800 text-neutral-400 hover:border-neutral-700'
-                                ]">
-                            {{ status }}
-                        </button>
-                    </div>
-
-                    <div v-if="(!isKollektiv && form.tvGender !== 'Mehrere') || (form.aktenart === 'Kollektivschnellakte' && form.altesVerfahren)" class="space-y-1">
-                        <div>
-                            <label class="block text-[10px] text-neutral-400 mb-1">Abgenommene Gegenstände</label>
-                            <textarea v-model="singleGegenstaende" rows="2" placeholder="Liste der abgenommenen Gegenstände" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all"></textarea>
-                        </div>
-                    </div>
-
-                    <div v-else class="space-y-2">
-                        <div v-for="(tv, idx) in form.tvs" :key="idx" class="p-2.5 bg-[#18181b] border border-neutral-800 rounded-lg space-y-1.5">
-                            <div class="flex justify-between items-center">
-                                <span class="text-[10px] font-semibold text-emerald-400">Tatverdächtiger {{ idx + 1 }}</span>
-                                <button v-if="form.tvs.length > 1" @click="removeTV(idx)" class="text-[10px] text-red-400 hover:underline">Entfernen</button>
-                            </div>
-                            <input v-model="tv.daten" type="text" placeholder="Vorname Nachname, Geb.: DD.MM.YYYY" class="w-full bg-[#121214] border border-neutral-800 rounded-lg p-1.5 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
-                            <textarea v-model="tv.gegenstaende" rows="2" placeholder="Gegenstände..." class="w-full bg-[#121214] border border-neutral-800 rounded-lg p-1.5 text-xs text-neutral-100 focus:border-emerald-500 transition-all"></textarea>
-                        </div>
-                        <button @click="addTV" class="w-full py-1.5 bg-[#18181b] hover:bg-neutral-900 border border-dashed border-neutral-700 text-[11px] text-neutral-300 rounded-lg transition-colors flex items-center justify-center gap-1.5">
-                            + weiteren TV hinzufügen
-                        </button>
-                    </div>
-                </div>
-
-                <!-- 4. Dynamische Zusatzfelder -->
-                <div v-if="hasSachverhalt || form.aktenart === 'Fahndung' || isKollektiv" class="bg-[#121214] border border-neutral-800/80 rounded-xl p-3 space-y-2.5 shadow-sm">
-                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-emerald-400">
-                        Spezifische Angaben
-                    </label>
-
-                    <div v-if="hasSachverhalt">
-                        <label class="block text-[10px] text-neutral-400 mb-1">Sachverhalt aus Sicht des SERTs</label>
-                        <textarea v-model="form.sachverhalt" rows="2" placeholder="Angaben zum Sachverhalt..." class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all"></textarea>
-                    </div>
-
-                    <template v-if="form.aktenart === 'Fahndung'">
-                        <div>
-                            <label class="block text-[10px] text-neutral-400 mb-1">Grund der Fahndung</label>
-                            <textarea v-model="form.fahndungGrund" rows="2" placeholder="Begründung..." class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all"></textarea>
-                        </div>
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="block text-[10px] text-neutral-400 mb-1">Verknüpfte Akte</label>
-                                <input v-model="form.verknuepfteAkte" type="text" placeholder="Name der Akte" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
-                            </div>
-                            <div>
-                                <label class="block text-[10px] text-neutral-400 mb-1">Fall-ID</label>
-                                <input v-model="form.fallId" type="text" placeholder="123" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
-                            </div>
-                        </div>
-                        <div>
-                            <label class="block text-[10px] text-neutral-400 mb-1">Zweck der Fahndung</label>
-                            <input v-model="form.fahndungZweck" type="text" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
-                        </div>
-                    </template>
-
-                    <template v-if="isKollektiv">
-                        <div class="grid grid-cols-2 gap-2">
-                            <div>
-                                <label class="block text-[10px] text-neutral-400 mb-1">Genehmigt Dienstnummer</label>
-                                <input v-model="form.genehmigtDienstnummer" type="text" placeholder="SD-01" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
-                            </div>
-                            <div>
-                                <label class="block text-[10px] text-neutral-400 mb-1">Uhrzeit der Genehmigung</label>
-                                <input v-model="form.genehmigtUhrzeit" type="text" placeholder="15:30" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
-                            </div>
-                        </div>
-                    </template>
-                </div>
-
-                <!-- 5. Rechte, Richter, Anwalt & Medizin -->
-                <div class="bg-[#121214] border border-neutral-800/80 rounded-xl p-3 space-y-2.5 shadow-sm">
-                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-emerald-400">
-                        Rechte, Richter, Anwalt & Medizin
-                    </label>
-
-                    <div class="grid grid-cols-2 gap-2">
-                        <div>
-                            <label class="block text-[10px] text-neutral-400 mb-1">Rechte verlesen von (DN)</label>
-                            <input v-model="form.rechteDN" type="text" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
-                        </div>
-                        <div>
-                            <label class="block text-[10px] text-neutral-400 mb-1">Zeuge (DN)</label>
-                            <input v-model="form.zeugeDN" type="text" class="w-full bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
-                        </div>
-                    </div>
-
-                    <div class="space-y-2 pt-0.5">
-                        <div class="flex items-center justify-between p-2.5 bg-[#18181b] border border-neutral-800 rounded-lg">
-                            <span class="text-xs text-neutral-300">Ist ein Richter anwesend?</span>
-                            <div class="flex items-center gap-2">
-                                <input v-if="!form.richterDa" v-model="form.richterBestaerktDurch" type="text" class="bg-[#121214] border border-neutral-800 rounded-md p-1 text-[11px] text-neutral-300 w-32 focus:border-emerald-500 transition-all" />
-                                <button @click="form.richterDa = !form.richterDa" :class="[form.richterDa ? 'bg-emerald-500' : 'bg-neutral-700', 'w-8 h-4 rounded-full p-0.5 transition-colors relative']">
-                                    <div :class="[form.richterDa ? 'translate-x-4' : 'translate-x-0', 'w-3 h-3 bg-white rounded-full transition-transform']"></div>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-between p-2.5 bg-[#18181b] border border-neutral-800 rounded-lg">
-                            <span class="text-xs text-neutral-300">Anwalt gefordert?</span>
-                            <div class="flex items-center gap-2">
-                                <input v-if="form.anwaltGefordert" v-model="form.anwaltBestaerktDurch" type="text" class="bg-[#121214] border border-neutral-800 rounded-md p-1 text-[11px] text-neutral-300 w-32 focus:border-emerald-500 transition-all" />
-                                <button @click="form.anwaltGefordert = !form.anwaltGefordert" :class="[form.anwaltGefordert ? 'bg-emerald-500' : 'bg-neutral-700', 'w-8 h-4 rounded-full p-0.5 transition-colors relative']">
-                                    <div :class="[form.anwaltGefordert ? 'translate-x-4' : 'translate-x-0', 'w-3 h-3 bg-white rounded-full transition-transform']"></div>
-                                </button>
-                            </div>
-                        </div>
-
-                        <div class="flex items-center justify-between p-2.5 bg-[#18181b] border border-neutral-800 rounded-lg">
-                            <span class="text-xs text-neutral-300">Medizinische Behandlung benötigt?</span>
-                            <button @click="form.medizinBenoetigt = !form.medizinBenoetigt" :class="[form.medizinBenoetigt ? 'bg-emerald-500' : 'bg-neutral-700', 'w-8 h-4 rounded-full p-0.5 transition-colors relative']">
-                                <div :class="[form.medizinBenoetigt ? 'translate-x-4' : 'translate-x-0', 'w-3 h-3 bg-white rounded-full transition-transform']"></div>
-                            </button>
-                        </div>
-                    </div>
-                </div>
-
-                <!-- 6. Gezeichnet von -->
-                <div class="bg-[#121214] border border-neutral-800/80 rounded-xl p-3 space-y-2 shadow-sm">
-                    <label class="block text-[11px] font-semibold uppercase tracking-wider text-emerald-400">
-                        Gezeichnet Von
-                    </label>
-                    <div class="grid grid-cols-1 md:grid-cols-3 gap-2">
-                        <input v-model="form.zeichnerName" type="text" placeholder="Codename" class="bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
-                        <input v-model="form.zeichnerDN" type="text" placeholder="Dienstnummer" class="bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all" />
-                        <select v-model="form.zeichnerRang" class="bg-[#18181b] border border-neutral-800 rounded-lg p-2 text-xs text-neutral-100 focus:border-emerald-500 transition-all">
-                            <option v-for="rang in raenge" :key="rang" :value="rang">{{ rang }}</option>
-                        </select>
-                    </div>
-                </div>
-
-            </section>
-
-            <!-- RIGHT COLUMN: Live Document Preview -->
-            <section class="lg:col-span-5 flex flex-col h-full">
-                <div class="sticky top-3 bg-[#121214] border border-neutral-800/80 rounded-xl p-3 flex flex-col flex-grow shadow-sm">
-                    <div class="flex items-center justify-between pb-2.5 mb-2.5 border-b border-neutral-800">
-                        <div class="text-[11px] font-semibold uppercase tracking-wider text-neutral-300">
-                            Live-Vorschau
-                        </div>
-                        <button @click="copyToClipboard" class="flex items-center gap-1.5 px-3 py-1 bg-emerald-500 hover:bg-emerald-600 text-black font-semibold text-xs rounded-lg transition-all shadow-sm">
-                            {{ copied ? 'Kopiert!' : 'Akte kopieren' }}
-                        </button>
-                    </div>
-
-                    <div class="flex-grow bg-[#09090b] border border-neutral-800/80 rounded-lg p-3 font-mono text-[10.5px] text-neutral-300 whitespace-pre-wrap overflow-y-auto leading-relaxed select-all max-h-[75vh]">
-                        {{ generatedText }}
-                    </div>
-                </div>
-            </section>
-
-        </main>
-
-        <!-- Footer -->
-        <footer class="mt-4 pt-2 border-t border-neutral-900 text-center">
-            <span class="text-[9px] text-neutral-600 tracking-widest uppercase">made by Stitch</span>
-        </footer>
-
+<body class="min-h-screen bg-neutral-950 text-neutral-100 font-sans" x-data="aktengenerator()">
+  
+  <header class="border-b border-neutral-800/80 bg-neutral-950/80 backdrop-blur sticky top-0 z-10">
+    <div class="mx-auto max-w-7xl px-6 py-4 flex items-center gap-3">
+      <div class="h-9 w-9 rounded-lg bg-emerald-500/15 text-emerald-400 grid place-items-center font-bold">★</div>
+      <div class="min-w-0">
+        <h1 class="text-sm sm:text-base font-semibold tracking-wide truncate">NARCO COUNTY SHERIFF DEPARTMENT</h1>
+        <p class="text-[11px] uppercase tracking-[0.2em] text-emerald-400/80">Special Emergency Response Team · Aktengenerator</p>
+      </div>
     </div>
+  </header>
 
-    <!-- Vue Application Script -->
-    <script>
-        const { createApp, ref, computed } = Vue;
+  <main class="mx-auto max-w-7xl px-6 py-8 grid gap-6 lg:grid-cols-2">
+    <!-- FORMULAR -->
+    <section class="space-y-6">
+      
+      <!-- Aktenart -->
+      <div class="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5 space-y-3">
+        <h2 class="text-xs uppercase tracking-[0.2em] text-emerald-400/80">Aktenart</h2>
+        <select x-model="aktenart" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none">
+          <template x-for="art in aktenarten">
+            <option :value="art" x-text="art"></option>
+          </template>
+        </select>
+      </div>
 
-        createApp({
-            setup() {
-                const copied = ref(false);
+      <!-- Tatort & Zeitraum -->
+      <div class="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5 space-y-3">
+        <h2 class="text-xs uppercase tracking-[0.2em] text-emerald-400/80">Tatort & Zeitraum</h2>
+        <label class="block space-y-1.5">
+          <span class="text-xs text-neutral-400">Ort</span>
+          <select x-model="ortLabel" @change="handleOrtChange" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none">
+            <template x-for="o in orte">
+              <option :value="o.label" x-text="o.label"></option>
+            </template>
+          </select>
+        </label>
+        <template x-if="ortLabel === 'Eigene Angabe'">
+          <label class="block space-y-1.5">
+            <span class="text-xs text-neutral-400">Eigene Angabe</span>
+            <input type="text" x-model="ortCustom" placeholder="Ort eingeben" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none">
+          </label>
+        </template>
+        <div class="grid grid-cols-2 gap-3">
+          <label class="block space-y-1.5">
+            <span class="text-xs text-neutral-400">PLZ</span>
+            <input type="text" x-model="plz" placeholder="PLZ" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none">
+          </label>
+          <label class="block space-y-1.5">
+            <span class="text-xs text-neutral-400">Datum</span>
+            <input type="text" x-model="datum" placeholder="TT.MM.JJJJ" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none">
+          </label>
+        </div>
+        <div class="grid grid-cols-2 gap-3">
+          <label class="block space-y-1.5">
+            <span class="text-xs text-neutral-400" x-text="aktenart === 'Fahndung' ? 'Uhrzeit' : 'Beginn'"></span>
+            <input type="text" x-model="startZeit" placeholder="HH:MM" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none">
+          </label>
+          <template x-if="aktenart !== 'Fahndung'">
+            <label class="block space-y-1.5">
+              <span class="text-xs text-neutral-400">Ende</span>
+              <input type="text" x-model="endZeit" placeholder="HH:MM" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none">
+            </label>
+          </template>
+        </div>
+      </div>
 
-                const ortePreset = [
-                    { name: 'Hoover Laden', plz: '7326' },
-                    { name: 'Westhighway Laden', plz: '5067' },
-                    { name: 'Laden 1000', plz: '1000' },
-                    { name: 'Laden 1012', plz: '1012' },
-                    { name: 'Vespucci PD', plz: '8090' },
-                    { name: 'Staatsbank', plz: '7090' },
-                    { name: 'Roxwoodbank', plz: '988' },
-                    { name: 'Juwelier', plz: '7251' },
-                    { name: 'Staatsgefängnis', plz: '4000' },
-                    { name: 'Freie Eingabe...', plz: '' }
-                ];
+      <!-- Beschuldigte / TV -->
+      <div class="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5 space-y-3">
+        <h2 class="text-xs uppercase tracking-[0.2em] text-emerald-400/80">Beschuldigte / TV</h2>
+        <template x-if="!isKollektiv">
+          <div class="grid grid-cols-3 gap-2">
+            <template x-for="g in ['Männlich', 'Weiblich', 'Mehrere']">
+              <button type="button" @click="geschlecht = g" :class="geschlecht === g ? 'border-emerald-500 bg-emerald-500/10 text-emerald-300' : 'border-neutral-800 bg-neutral-900 text-neutral-300'" class="rounded-lg border px-3 py-2 text-sm font-medium transition" x-text="g"></button>
+            </template>
+          </div>
+        </template>
 
-                const raenge = [
-                    'Deputy Trainee I', 'Deputy Trainee II', 'Deputy', 'Senior Deputy', 
-                    'Corporal', 'Sergeant', 'Sergeant II', 'Staff Sergeant', 'Master Sergeant', 
-                    'Trial Lieutenant', 'Lieutenant', 'Lieutenant II', 'Master Lieutenant', 
-                    'Captain', 'Trial Commander', 'Commander', 'Chief Deputy', 'Assistant Sheriff', 
-                    'Undersheriff', 'Sheriff'
-                ];
+        <template x-if="!mehrere">
+          <label class="block space-y-1.5">
+            <span class="text-xs text-neutral-400">Abgenommene Gegenstände</span>
+            <textarea x-model="einzelGegenstaende" placeholder="Liste der abgenommenen Gegenstände" rows="3" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none"></textarea>
+          </label>
+        </template>
 
-                const selectedOrt = ref('Hoover Laden');
-                const singleGegenstaende = ref('');
+        <template x-if="mehrere">
+          <div class="space-y-3">
+            <template x-for="(tv, i) in tvs" :key="tv.id">
+              <div class="rounded-xl border border-neutral-800 bg-neutral-900/60 p-3 space-y-2">
+                <div class="flex items-center justify-between">
+                  <span class="text-xs uppercase tracking-wider text-emerald-400/80" x-text="'Tatverdächtiger ' + (i + 1)"></span>
+                  <button type="button" @click="tvs = tvs.filter(x => x.id !== tv.id)" x-show="tvs.length > 1" class="text-neutral-500 hover:text-red-400">Löschen</button>
+                </div>
+                <input type="text" x-model="tv.name" placeholder="Vorname Nachname, Geb.: TT.MM.JJJJ" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none">
+                <textarea x-model="tv.gegenstaende" placeholder="Abgenommene Gegenstände" rows="2" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none"></textarea>
+              </div>
+            </template>
+            <button type="button" @click="tvs.push({id: Date.now(), name: '', gegenstaende: ''})" class="inline-flex items-center gap-2 rounded-lg border border-emerald-500/40 bg-emerald-500/10 px-3 py-2 text-sm font-medium text-emerald-300">TV hinzufügen</button>
+          </div>
+        </template>
+      </div>
 
-                const form = ref({
-                    aktenart: 'Schnellakte',
-                    ortText: 'Hoover Laden',
-                    plz: '7326',
-                    datum: '23.07.2026',
-                    beginnZeit: 'XX:XX',
-                    endeZeit: 'XX:XX',
-                    tvGender: 'Männlich',
-                    altesVerfahren: false,
-                    tvs: [
-                        { daten: 'Vorname Nachname, Geb.: XX.XX.XXXX', gegenstaende: 'Keine' }
-                    ],
-                    sachverhalt: '',
-                    fahndungGrund: '',
-                    verknuepfteAkte: 'Name der Akte',
-                    fallId: 'XXX',
-                    fahndungZweck: 'Vollstreckung einer offenen Akte',
-                    genehmigtDienstnummer: '',
-                    genehmigtUhrzeit: '',
-                    rechteDN: 'DIENSTNUMMER',
-                    zeugeDN: 'DIENSTNUMMER',
-                    richterDa: false,
-                    richterBestaerktDurch: 'DIENSTNUMMER',
-                    anwaltGefordert: true,
-                    anwaltBestaerktDurch: 'DIENSTNUMMER',
-                    medizinBenoetigt: false,
-                    zeichnerName: '', 
-                    zeichnerDN: 'SD-61',
-                    zeichnerRang: 'Senior Deputy'
-                });
+      <!-- Sachverhalt -->
+      <template x-if="showSachverhalt">
+        <div class="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5 space-y-3">
+          <h2 class="text-xs uppercase tracking-[0.2em] text-emerald-400/80">Sachverhalt</h2>
+          <textarea x-model="sachverhalt" placeholder="Sachverhalt aus Sicht des SERTs" rows="5" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none"></textarea>
+        </div>
+      </template>
 
-                const isKollektiv = computed(() => {
-                    return form.value.aktenart === 'Kollektivakte' || form.value.aktenart === 'Kollektivschnellakte';
-                });
+      <!-- Fahndung Details -->
+      <template x-if="aktenart === 'Fahndung'">
+        <div class="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5 space-y-3">
+          <h2 class="text-xs uppercase tracking-[0.2em] text-emerald-400/80">Fahndung</h2>
+          <label class="block space-y-1.5"><span class="text-xs text-neutral-400">Grund der Fahndung</span><textarea x-model="fahndungGrund" rows="2" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none"></textarea></label>
+          <div class="grid grid-cols-2 gap-3">
+            <label class="block space-y-1.5"><span class="text-xs text-neutral-400">Name der verknüpften Akte</span><input type="text" x-model="fahndungAkteName" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none"></label>
+            <label class="block space-y-1.5"><span class="text-xs text-neutral-400">Fall-ID</span><input type="text" x-model="fahndungFallId" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none"></label>
+          </div>
+          <label class="block space-y-1.5"><span class="text-xs text-neutral-400">Zweck der Fahndung</span><input type="text" x-model="fahndungZweck" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none"></label>
+        </div>
+      </template>
 
-                const hasSachverhalt = computed(() => {
-                    return ['Strafakte', 'Kollektivakte', 'Bußgeldbescheid', 'Fahndung'].includes(form.value.aktenart);
-                });
+      <!-- Kollektiv Genehmigung -->
+      <template x-if="isKollektiv">
+        <div class="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5 space-y-3">
+          <h2 class="text-xs uppercase tracking-[0.2em] text-emerald-400/80">Kollektiv-Genehmigung</h2>
+          <div class="grid grid-cols-2 gap-3">
+            <label class="block space-y-1.5"><span class="text-xs text-neutral-400">Genehmigt von (DN)</span><input type="text" x-model="kollGenehmigtVon" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none"></label>
+            <label class="block space-y-1.5"><span class="text-xs text-neutral-400">Uhrzeit</span><input type="text" x-model="kollGenehmigtUhrzeit" placeholder="HH:MM" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none"></label>
+          </div>
+        </div>
+      </template>
 
-                const handleOrtChange = () => {
-                    const match = ortePreset.find(o => o.name === selectedOrt.value);
-                    if (match && match.plz) {
-                        form.value.plz = match.plz;
-                        form.value.ortText = match.name;
-                    } else {
-                        form.value.ortText = selectedOrt.value;
-                    }
-                };
+      <!-- Rechtliches -->
+      <div class="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5 space-y-3">
+        <h2 class="text-xs uppercase tracking-[0.2em] text-emerald-400/80">Rechte, Richter, Anwalt & Medizin</h2>
+        <div class="grid grid-cols-2 gap-3">
+          <label class="block space-y-1.5"><span class="text-xs text-neutral-400">Rechte vorgelesen von (DN)</span><input type="text" x-model="rechteVon" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none"></label>
+          <label class="block space-y-1.5"><span class="text-xs text-neutral-400">Zeuge (DN)</span><input type="text" x-model="rechteZeuge" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none"></label>
+        </div>
+        
+        <button type="button" @click="richterAnwesend = !richterAnwesend" class="w-full flex items-center justify-between rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2.5 text-left">
+          <span class="text-sm text-neutral-200">Ist ein Richter anwesend?</span>
+          <span :class="richterAnwesend ? 'bg-emerald-500' : 'bg-neutral-700'" class="relative inline-flex h-6 w-11 items-center rounded-full transition"><span :class="richterAnwesend ? 'translate-x-5' : 'translate-x-0.5'" class="inline-block h-5 w-5 transform rounded-full bg-white transition"></span></span>
+        </button>
+        <template x-if="!richterAnwesend">
+          <label class="block space-y-1.5"><span class="text-xs text-neutral-400">Bestätigt durch (Dienstnummer)</span><input type="text" x-model="richterBestaetigtVon" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none"></label>
+        </template>
 
-                const addTV = () => {
-                    form.value.tvs.push({ daten: '', gegenstaende: '' });
-                };
+        <button type="button" @click="anwaltGefordert = !anwaltGefordert" class="w-full flex items-center justify-between rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2.5 text-left">
+          <span class="text-sm text-neutral-200">Anwalt gefordert?</span>
+          <span :class="anwaltGefordert ? 'bg-emerald-500' : 'bg-neutral-700'" class="relative inline-flex h-6 w-11 items-center rounded-full transition"><span :class="anwaltGefordert ? 'translate-x-5' : 'translate-x-0.5'" class="inline-block h-5 w-5 transform rounded-full bg-white transition"></span></span>
+        </button>
+        <template x-if="anwaltGefordert">
+          <label class="block space-y-1.5"><span class="text-xs text-neutral-400">Keiner verfügbar bestätigt durch (DN)</span><input type="text" x-model="anwaltBestaetigtVon" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none"></label>
+        </template>
 
-                const removeTV = (index) => {
-                    form.value.tvs.splice(index, 1);
-                };
+        <button type="button" @click="medizin = !medizin" class="w-full flex items-center justify-between rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2.5 text-left">
+          <span class="text-sm text-neutral-200">Wurde medizinische Behandlung benötigt?</span>
+          <span :class="medizin ? 'bg-emerald-500' : 'bg-neutral-700'" class="relative inline-flex h-6 w-11 items-center rounded-full transition"><span :class="medizin ? 'translate-x-5' : 'translate-x-0.5'" class="inline-block h-5 w-5 transform rounded-full bg-white transition"></span></span>
+        </button>
+      </div>
 
-                const generatedText = computed(() => {
-                    const header = `⭐ NARCO COUNTY SHERIFF DEPARTMENT ⭐\n| - Special Emergency Response Team - |\n\n`;
-                    let body = `| Tatort und Zeitraum:|\n${form.value.ortText}${form.value.plz ? ' PLZ ' + form.value.plz : ''}\n`;
+      <!-- Unterschrift -->
+      <div class="rounded-2xl border border-neutral-800 bg-neutral-900/60 p-5 space-y-3">
+        <h2 class="text-xs uppercase tracking-[0.2em] text-emerald-400/80">Gezeichnet von</h2>
+        <div class="grid grid-cols-2 gap-3">
+          <label class="block space-y-1.5"><span class="text-xs text-neutral-400">Name</span><input type="text" x-model="signName" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none"></label>
+          <label class="block space-y-1.5"><span class="text-xs text-neutral-400">Dienstnummer</span><input type="text" x-model="signDN" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none"></label>
+        </div>
+        <label class="block space-y-1.5">
+          <span class="text-xs text-neutral-400">Rang</span>
+          <select x-model="signRang" class="w-full rounded-lg border border-neutral-800 bg-neutral-950 px-3 py-2 text-sm text-neutral-100 focus:border-emerald-500 focus:outline-none">
+            <template x-for="r in raenge"><option :value="r" x-text="r"></option></template>
+          </select>
+        </label>
+      </div>
 
-                    if (form.value.aktenart === 'Fahndung') {
-                        body += `Am ${form.value.datum} um ${form.value.beginnZeit} Uhr\n\n`;
-                    } else {
-                        body += `Am ${form.value.datum} von ${form.value.beginnZeit} Uhr bis ${form.value.endeZeit} Uhr\n\n`;
-                    }
+    </section>
 
-                    if (hasSachverhalt.value) {
-                        body += `| Sachverhalt aus Sicht des SERTs: |\n${form.value.sachverhalt || 'Angaben zum Sachverhalt'}\n\n`;
-                    }
+    <!-- LIVE-VORSCHAU -->
+    <section class="lg:sticky lg:top-24 lg:self-start">
+      <div class="rounded-2xl border border-neutral-800 bg-neutral-900/60 shadow-2xl overflow-hidden">
+        <div class="flex items-center justify-between border-b border-neutral-800 px-4 py-3">
+          <div>
+            <p class="text-xs uppercase tracking-[0.2em] text-emerald-400/80">Live-Vorschau</p>
+            <p class="text-sm text-neutral-300" x-text="aktenart"></p>
+          </div>
+          <button type="button" @click="copyOutput" class="inline-flex items-center gap-2 rounded-lg bg-emerald-500 px-3 py-2 text-sm font-semibold text-neutral-950 hover:bg-emerald-400 transition">
+            <span x-text="copied ? 'Kopiert' : 'Akte kopieren'"></span>
+          </button>
+        </div>
+        <pre class="p-4 text-[13px] leading-relaxed text-neutral-200 whitespace-pre-wrap font-mono max-h-[75vh] overflow-auto" x-text="output"></pre>
+      </div>
+    </section>
+  </main>
 
-                    const useAltesVerfahren = form.value.aktenart === 'Kollektivschnellakte' && form.value.altesVerfahren;
+  <footer class="py-8 text-center"><p class="text-[11px] text-neutral-600">made by Stitch</p></footer>
 
-                    if (form.value.aktenart === 'Fahndung') {
-                        body += `| Grund der Fahndung: |\n${form.value.fahndungGrund}\n\n`;
-                        body += `| Verknüpfte Akte: |\n[${form.value.verknuepfteAkte}]  |  Fall-ID: [${form.value.fallId}]\n\n`;
-                    } else if ((isKollektiv.value && !useAltesVerfahren) || form.value.tvGender === 'Mehrere') {
-                        form.value.tvs.forEach((tv, idx) => {
-                            body += `| Tatverdächtiger ${idx + 1}:|\n${tv.daten || 'Vorname Nachname, Geb.: XX.XX.XXXX'}\nAbgenommene Gegenstände:\n${tv.gegenstaende || 'Keine'}\n\n`;
-                        });
-                        if (isKollektiv.value && form.value.genehmigtDienstnummer) {
-                            body += `| Genehmigung:|\nKollektivakte genehmigt von ${form.value.genehmigtDienstnummer} um ${form.value.genehmigtUhrzeit || 'XX:XX'} Uhr\n\n`;
-                        }
-                    } else {
-                        body += `| Abgenommene Gegenstände:|\n${singleGegenstaende.value || 'Keine'}\n\n`;
-                    }
+  <script>
+    function todayDE() {
+      const d = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      return `${pad(d.getDate())}.${pad(d.getMonth() + 1)}.${d.getFullYear()}`;
+    }
 
-                    body += `| Bemerkungen:|\n`;
-                    const plural = (isKollektiv.value && !useAltesVerfahren) || form.value.tvGender === 'Mehrere';
-                    
-                    body += `Die Rechte wurden ${plural ? 'den Beschuldigten' : 'dem Beschuldigten'} durch ${form.value.rechteDN || 'DIENSTNUMMER'} im Beisein von ${form.value.zeugeDN || 'DIENSTNUMMER'} verlesen und verstanden.\n`;
+    function aktengenerator() {
+      return {
+        aktenarten: ["Schnellakte", "Strafakte", "Kollektivschnellakte", "Kollektivakte", "Bußgeldbescheid", "Fahndung"],
+        aktenart: "Schnellakte",
+        orte: [
+          { label: "Hoover Laden", plz: "7326" },
+          { label: "Westhighway Laden", plz: "5067" },
+          { label: "Laden 1000", plz: "1000" },
+          { label: "Laden 1012", plz: "1012" },
+          { label: "Vespucci PD", plz: "8090" },
+          { label: "Staatsbank", plz: "7090" },
+          { label: "Roxwoodbank", plz: "988" },
+          { label: "Juwelier", plz: "7251" },
+          { label: "Staatsgefängnis", plz: "4000" },
+          { label: "Eigene Angabe", plz: "" }
+        ],
+        raenge: [
+          "Deputy Trainee I", "Deputy Trainee II", "Deputy", "Senior Deputy", "Corporal", "Sergeant", "Sergeant II", "Staff Sergeant", "Master Sergeant", "Trial Lieutenant", "Lieutenant", "Lieutenant II", "Master Lieutenant", "Captain", "Trial Commander", "Commander", "Chief Deputy", "Assistant Sheriff", "Undersheriff", "Sheriff"
+        ],
+        ortLabel: "Hoover Laden",
+        ortCustom: "",
+        plz: "7326",
+        datum: todayDE(),
+        startZeit: "",
+        endZeit: "",
+        geschlecht: "Männlich",
+        einzelGegenstaende: "",
+        tvs: [{ id: 1, name: "", gegenstaende: "" }],
+        sachverhalt: "",
+        fahndungGrund: "",
+        fahndungAkteName: "",
+        fahndungFallId: "",
+        fahndungZweck: "Vollstreckung einer offenen Akte",
+        kollGenehmigtVon: "",
+        kollGenehmigtUhrzeit: "",
+        rechteVon: "",
+        rechteZeuge: "",
+        richterAnwesend: true,
+        richterBestaetigtVon: "",
+        anwaltGefordert: false,
+        anwaltBestaetigtVon: "",
+        medizin: false,
+        signName: "",
+        signDN: "SD-61",
+        signRang: "Deputy",
+        copied: false,
 
-                    if (form.value.aktenart === 'Fahndung') {
-                        body += `Der o.g. Beschuldigte ist flüchtig. Beim Antreffen des Beschuldigten ist dieser festzunehmen und über seine Rechte zu belehren und der gerechten Strafe zuzuführen.\n`;
-                        body += `${form.value.medizinBenoetigt ? 'Medizinische Behandlung wurde durchgeführt.' : 'Es wurde keine medizinische Behandlung benötigt.'}\n`;
-                        body += `Der Zweck der Fahndung ist: ${form.value.fahndungZweck || 'Vollstreckung einer offenen Akte.'}\n\n`;
-                    } else {
-                        body += `Der Beschuldigte ${form.value.anwaltGefordert ? '(BESTAND)' : '(VERZICHTETE)'} auf einen Rechtsbeistand.\n`;
-                        body += `Der Beschuldigte ${form.value.medizinBenoetigt ? '(BENÖTIGTE)' : '(VERZICHTETE)'} auf medizinische Versorgung.\n`;
-                        if (!form.value.richterDa) {
-                            body += `Kein Haftrichter verfügbar - bestätigt von: ${form.value.richterBestaerktDurch || 'DIENSTNUMMER'}\n\n`;
-                        } else {
-                            body += `Haftrichter war anwesend.\n\n`;
-                        }
-                    }
+        get isKollektiv() { return this.aktenart === 'Kollektivakte' || this.aktenart === 'Kollektivschnellakte'; },
+        get mehrere() { return this.isKollektiv || this.geschlecht === 'Mehrere'; },
+        get showSachverhalt() { return ['Strafakte', 'Kollektivakte', 'Bußgeldbescheid', 'Fahndung'].includes(this.aktenart); },
 
-                    body += `| Gezeichnet von:|\n| ${form.value.zeichnerName || 'Codename'} | ${form.value.zeichnerDN || 'DN'} | ${form.value.zeichnerRang}`;
+        handleOrtChange() {
+          const found = this.orte.find(o => o.label === this.ortLabel);
+          if (found && this.ortLabel !== 'Eigene Angabe') this.plz = found.plz;
+          else this.plz = '';
+        },
 
-                    return header + body;
-                });
+        get ortLine() {
+          const label = this.ortLabel === 'Eigene Angabe' ? this.ortCustom : this.ortLabel;
+          return `${label || '-'}${this.plz ? ` PLZ ${this.plz}` : ''}`;
+        },
 
-                const copyToClipboard = () => {
-                    navigator.clipboard.writeText(generatedText.value);
-                    copied.value = true;
-                    setTimeout(() => copied.value = false, 2000);
-                };
+        get zeitraumLine() {
+          return this.aktenart === 'Fahndung' 
+            ? `Am ${this.datum} um ${this.startZeit || '--:--'} Uhr` 
+            : `Am ${this.datum} von ${this.startZeit || '--:--'} Uhr bis ${this.endZeit || '--:--'} Uhr`;
+        },
 
-                return {
-                    form,
-                    selectedOrt,
-                    singleGegenstaende,
-                    ortePreset,
-                    raenge,
-                    isKollektiv,
-                    hasSachverhalt,
-                    handleOrtChange,
-                    addTV,
-                    removeTV,
-                    generatedText,
-                    copyToClipboard,
-                    copied
-                };
-            }
-        }).mount('#app');
-    </script>
+        get output() {
+          const header = `⭐ NARCO COUNTY SHERIFF DEPARTMENT ⭐\n| - Special Emergency Response Team - |`;
+          const tatort = `| Tatort und Zeitraum:|\n${this.ortLine}\n${this.zeitraumLine}`;
+          const sachverhaltBlock = this.showSachverhalt ? `\n\n| Sachverhalt aus Sicht des SERTs: |\n${this.sachverhalt || '-'}` : '';
+          const signBlock = `| Gezeichnet von:|\n${this.signName || '-'} | ${this.signDN} | ${this.signRang}`;
+
+          const rechteSatz = this.mehrere
+            ? `Die Rechte wurden den Beschuldigten durch ${this.rechteVon || '-'} im Beisein von ${this.rechteZeuge || '-'} verlesen und verstanden.`
+            : `Die Rechte wurden dem Beschuldigten durch ${this.rechteVon || '-'} im Beisein von ${this.rechteZeuge || '-'} verlesen und verstanden.`;
+          
+          const anwaltSatz = this.mehrere
+            ? (this.anwaltGefordert ? "Die Beschuldigten BESTANDEN auf einen Rechtsbeistand." : "Die Beschuldigten VERZICHTETEN auf einen Rechtsbeistand.")
+            : (this.anwaltGefordert ? "Der Beschuldigte BESTAND auf einen Rechtsbeistand." : "Der Beschuldigte VERZICHTETE auf einen Rechtsbeistand.");
+
+          const anwaltZusatz = this.anwaltGefordert ? `Keiner verfügbar bestätigt durch ${this.anwaltBestaetigtVon || '-'}.` : '';
+          
+          const medizinSatz = this.mehrere
+            ? (this.medizin ? "Die Beschuldigten BENÖTIGTEN medizinische Versorgung." : "Die Beschuldigten VERZICHTETEN AUF medizinische Versorgung.")
+            : (this.medizin ? "Der Beschuldigte BENÖTIGTE medizinische Versorgung." : "Der Beschuldigte VERZICHTETE AUF medizinische Versorgung.");
+
+          const richterZeile = !this.richterAnwesend ? `Kein Haftrichter verfügbar - bestätigt von: ${this.richterBestaetigtVon || '-'}` : '';
+
+          const bemerkungenLines = [rechteSatz, anwaltSatz, anwaltZusatz, medizinSatz, richterZeile].filter(Boolean).join('\n');
+
+          if (this.aktenart === 'Fahndung') {
+            return `${header}\n\n${tatort}${sachverhaltBlock}\n\n| Grund der Fahndung: |\n${this.fahndungGrund || '-'}\n\n| Verknüpfte Akte: |\n${this.fahndungAkteName || '-'} | Fall-ID: ${this.fahndungFallId || '-'}\n\n| Bemerkungen:|\n${rechteSatz}\nDer o.g. Beschuldigte ist flüchtig. Beim Antreffen des Beschuldigten ist dieser festzunehmen und über seine Rechte zu belehren und der gerechten Strafe zuzuführen.\n${medizinSatz}\nDer Zweck der Fahndung ist: ${this.fahndungZweck || '-'}.\n\n${signBlock}`;
+          }
+
+          if (this.isKollektiv) {
+            const tvBlocks = this.tvs.map((tv, i) => `| Tatverdächtiger ${i + 1}:|\n${tv.name || '-'}\nAbgenommene Gegenstände:\n${tv.gegenstaende || '-'}`).join('\n\n');
+            const genehmigung = `| Genehmigung:|\nKollektivakte genehmigt von ${this.kollGenehmigtVon || '-'} um ${this.kollGenehmigtUhrzeit || '-'} Uhr.`;
+            return `${header}\n\n${tatort}${sachverhaltBlock}\n\n${tvBlocks}\n\n${genehmigung}\n\n| Bemerkungen:|\n${bemerkungenLines}\n\n${signBlock}`;
+          }
+
+          const gegenstaendeBlock = this.mehrere 
+            ? this.tvs.map((tv, i) => `Tatverdächtiger ${i + 1}: ${tv.name || '-'}\n${tv.gegenstaende || '-'}`).join('\n\n')
+            : (this.einzelGegenstaende || '-');
+
+          return `${header}\n\n${tatort}${sachverhaltBlock}\n\n| Abgenommene Gegenstände:|\n${gegenstaendeBlock}\n\n| Bemerkungen:|\n${bemerkungenLines}\n\n${signBlock}`;
+        },
+
+        copyOutput() {
+          navigator.clipboard.writeText(this.output);
+          this.copied = true;
+          setTimeout(() => this.copied = false, 1600);
+        }
+      }
+    }
+  </script>
 </body>
 </html>
