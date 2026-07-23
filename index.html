@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Aktengenerator | Narco County Sheriff Department</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        emerald: {
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            900: '#064e3b',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Vue 3 CDN -->
+    <script src="https://unpkg.com/vue@3/dist/vue.global.js"></script>
+    <!-- Lucide Icons CDN -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+</head>
+<body class="bg-neutral-950 text-neutral-100 min-h-screen flex flex-col font-sans antialiased selection:bg-emerald-500 selection:text-black">
+
+    <div id="app" class="flex-grow flex flex-col p-4 md:p-6 lg:p-8 max-w-[1600px] mx-auto w-full">
+        
+        <!-- Header -->
+        <header class="mb-6 flex items-center justify-between border-b border-neutral-800 pb-4">
+            <div class="flex items-center gap-3">
+                <div class="p-2 bg-emerald-500/10 border border-emerald-500/20 rounded-lg text-emerald-400">
+                    <i data-lucide="shield-alert" class="w-7 h-7"></i>
+                </div>
+                <div>
+                    <h1 class="text-xl font-bold tracking-wide uppercase text-neutral-100">Narco County Sheriff Department</h1>
+                    <p class="text-xs text-neutral-400 font-mono">Special Emergency Response Team — Aktengenerator</p>
+                </div>
+            </div>
+            <div class="hidden sm:block text-right text-xs font-mono text-neutral-500">
+                STATION ID: SD-61<br>
+                SYSTEM STATUS: ONLINE
+            </div>
+        </header>
+
+        <!-- Main Content (2-Column Grid) -->
+        <main class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-grow">
+            
+            <!-- LEFT COLUMN: Form Controls (7 Cols) -->
+            <section class="lg:col-span-7 space-y-6">
+                
+                <!-- 1. Aktenart -->
+                <div class="bg-neutral-900/60 border border-neutral-800 rounded-xl p-5 space-y-3">
+                    <label class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-emerald-400">
+                        <i data-lucide="file-text" class="w-4 h-4"></i> Aktenart auswählen
+                    </label>
+                    <select v-model="form.aktenart" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-3 text-neutral-100 focus:outline-none focus:border-emerald-500 focus:ring-1 focus:ring-emerald-500">
+                        <option value="Schnellakte">Schnellakte</option>
+                        <option value="Strafakte">Strafakte</option>
+                        <option value="Kollektivschnellakte">Kollektivschnellakte</option>
+                        <option value="Kollektivakte">Kollektivakte</option>
+                        <option value="Bußgeldbescheid">Bußgeldbescheid</option>
+                        <option value="Fahndung">Fahndung</option>
+                    </select>
+                </div>
+
+                <!-- 2. Tatort & Zeitraum -->
+                <div class="bg-neutral-900/60 border border-neutral-800 rounded-xl p-5 space-y-4">
+                    <label class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-emerald-400">
+                        <i data-lucide="map-pin" class="w-4 h-4"></i> Tatort & Zeitraum
+                    </label>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div class="md:col-span-2">
+                            <select v-model="selectedOrt" @change="handleOrtChange" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-sm focus:border-emerald-500">
+                                <option v-for="o in ortePreset" :key="o.name" :value="o.name">{{ o.name }}</option>
+                            </select>
+                        </div>
+                        <div>
+                            <input v-model="form.plz" type="text" placeholder="PLZ" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-sm focus:border-emerald-500" />
+                        </div>
+                    </div>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <div>
+                            <label class="block text-xs text-neutral-400 mb-1">Datum</label>
+                            <input v-model="form.datum" type="text" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-sm focus:border-emerald-500" />
+                        </div>
+                        <div>
+                            <label class="block text-xs text-neutral-400 mb-1">Beginn Uhrzeit</label>
+                            <input v-model="form.beginnZeit" type="text" placeholder="14:30" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-sm focus:border-emerald-500" />
+                        </div>
+                        <div v-if="form.aktenart !== 'Fahndung'">
+                            <label class="block text-xs text-neutral-400 mb-1">Ende Uhrzeit</label>
+                            <input v-model="form.endeZeit" type="text" placeholder="15:00" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-sm focus:border-emerald-500" />
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Beschuldigte / TV Status -->
+                <div class="bg-neutral-900/60 border border-neutral-800 rounded-xl p-5 space-y-4">
+                    <label class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-emerald-400">
+                        <i data-lucide="users" class="w-4 h-4"></i> Beschuldigte / TV
+                    </label>
+                    <div class="flex gap-2">
+                        <button v-for="status in ['Männlich', 'Weiblich', 'Mehrere']" 
+                                :key="status"
+                                @click="form.tvGender = status"
+                                :class="[
+                                    'flex-1 py-2 rounded-lg border text-sm font-medium transition-all',
+                                    form.tvGender === status 
+                                        ? 'bg-emerald-500/20 border-emerald-500 text-emerald-400' 
+                                        : 'bg-neutral-950 border-neutral-800 text-neutral-400 hover:border-neutral-700'
+                                ]">
+                            {{ status }}
+                        </button>
+                    </div>
+
+                    <!-- Single TV Input -->
+                    <div v-if="!isKollektiv && form.tvGender !== 'Mehrere'" class="space-y-3">
+                        <div>
+                            <label class="block text-xs text-neutral-400 mb-1">Abgenommene Gegenstände</label>
+                            <textarea v-model="singleGegenstaende" rows="3" placeholder="1x Pistole&#10;1x Smartphone" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-sm focus:border-emerald-500"></textarea>
+                        </div>
+                    </div>
+
+                    <!-- Multiple TVs Input -->
+                    <div v-else class="space-y-4">
+                        <div v-for="(tv, idx) in form.tvs" :key="idx" class="p-3 bg-neutral-950 border border-neutral-800 rounded-lg space-y-2 relative">
+                            <div class="flex justify-between items-center">
+                                <span class="text-xs font-semibold text-emerald-400">Tatverdächtiger {{ idx + 1 }}</span>
+                                <button v-if="form.tvs.length > 1" @click="removeTV(idx)" class="text-xs text-red-400 hover:underline">Entfernen</button>
+                            </div>
+                            <input v-model="tv.daten" type="text" placeholder="Vorname Nachname, Geb.: DD.MM.YYYY" class="w-full bg-neutral-900 border border-neutral-800 rounded p-2 text-sm focus:border-emerald-500" />
+                            <textarea v-model="tv.gegenstaende" rows="2" placeholder="Abgenommene Gegenstände..." class="w-full bg-neutral-900 border border-neutral-800 rounded p-2 text-sm focus:border-emerald-500"></textarea>
+                        </div>
+                        <button @click="addTV" class="w-full py-2 bg-neutral-950 hover:bg-neutral-800 border border-dashed border-neutral-700 text-xs text-neutral-300 rounded-lg transition-colors flex items-center justify-center gap-2">
+                            <i data-lucide="plus" class="w-4 h-4"></i> weiteren TV hinzufügen
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 4. Dynamische Zusatzfelder -->
+                <div v-if="hasSachverhalt || form.aktenart === 'Fahndung' || isKollektiv" class="bg-neutral-900/60 border border-neutral-800 rounded-xl p-5 space-y-4">
+                    <label class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-emerald-400">
+                        <i data-lucide="align-left" class="w-4 h-4"></i> Spezifische Angaben
+                    </label>
+
+                    <div v-if="hasSachverhalt">
+                        <label class="block text-xs text-neutral-400 mb-1">Sachverhalt aus Sicht des SERTs</label>
+                        <textarea v-model="form.sachverhalt" rows="3" placeholder="Angaben zum Sachverhalt..." class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-sm focus:border-emerald-500"></textarea>
+                    </div>
+
+                    <!-- Fahndung Fields -->
+                    <template v-if="form.aktenart === 'Fahndung'">
+                        <div>
+                            <label class="block text-xs text-neutral-400 mb-1">Grund der Fahndung</label>
+                            <textarea v-model="form.fahndungGrund" rows="2" placeholder="Begründung..." class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-sm focus:border-emerald-500"></textarea>
+                        </div>
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs text-neutral-400 mb-1">Name der verknüpften Akte</label>
+                                <input v-model="form.verknuepfteAkte" type="text" placeholder="z.B. Strafakte Raub" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-sm focus:border-emerald-500" />
+                            </div>
+                            <div>
+                                <label class="block text-xs text-neutral-400 mb-1">Fall-ID</label>
+                                <input v-model="form.fallId" type="text" placeholder="123" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-sm focus:border-emerald-500" />
+                            </div>
+                        </div>
+                        <div>
+                            <label class="block text-xs text-neutral-400 mb-1">Zweck der Fahndung</label>
+                            <input v-model="form.fahndungZweck" type="text" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-sm focus:border-emerald-500" />
+                        </div>
+                    </template>
+
+                    <!-- Kollektiv Genehmigung -->
+                    <template v-if="isKollektiv">
+                        <div class="grid grid-cols-2 gap-3">
+                            <div>
+                                <label class="block text-xs text-neutral-400 mb-1">Kollektivakte genehmigt (Dienstnummer)</label>
+                                <input v-model="form.genehmigtDienstnummer" type="text" placeholder="SD-01" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-sm focus:border-emerald-500" />
+                            </div>
+                            <div>
+                                <label class="block text-xs text-neutral-400 mb-1">Uhrzeit der Genehmigung</label>
+                                <input v-model="form.genehmigtUhrzeit" type="text" placeholder="15:30" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-sm focus:border-emerald-500" />
+                            </div>
+                        </div>
+                    </template>
+                </div>
+
+                <!-- 5. Rechte, Richter, Anwalt & Medizin -->
+                <div class="bg-neutral-900/60 border border-neutral-800 rounded-xl p-5 space-y-4">
+                    <label class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-emerald-400">
+                        <i data-lucide="scale" class="w-4 h-4"></i> Protokoll & Rechte
+                    </label>
+
+                    <!-- Rechteverlesung -->
+                    <div class="grid grid-cols-2 gap-3">
+                        <div>
+                            <label class="block text-xs text-neutral-400 mb-1">Rechte verlesen von (DN)</label>
+                            <input v-model="form.rechteDN" type="text" placeholder="SD-61" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-sm focus:border-emerald-500" />
+                        </div>
+                        <div>
+                            <label class="block text-xs text-neutral-400 mb-1">Zeuge (DN)</label>
+                            <input v-model="form.zeugeDN" type="text" placeholder="SD-42" class="w-full bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-sm focus:border-emerald-500" />
+                        </div>
+                    </div>
+
+                    <!-- Toggles -->
+                    <div class="space-y-3 pt-2">
+                        <!-- Richter -->
+                        <div class="flex items-center justify-between p-3 bg-neutral-950 border border-neutral-800 rounded-lg">
+                            <span class="text-xs font-medium">Ist ein Richter anwesend?</span>
+                            <div class="flex items-center gap-3">
+                                <input v-if="!form.richterDa" v-model="form.richterBestaerktDurch" type="text" placeholder="Bestätigt durch DN" class="bg-neutral-900 border border-neutral-800 rounded p-1.5 text-xs w-36" />
+                                <button @click="form.richterDa = !form.richterDa" :class="[form.richterDa ? 'bg-emerald-500' : 'bg-neutral-700', 'w-12 h-6 rounded-full p-1 transition-colors relative']">
+                                    <div :class="[form.richterDa ? 'translate-x-6' : 'translate-x-0', 'w-4 h-4 bg-white rounded-full transition-transform']"></div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Anwalt -->
+                        <div class="flex items-center justify-between p-3 bg-neutral-950 border border-neutral-800 rounded-lg">
+                            <span class="text-xs font-medium">Anwalt gefordert?</span>
+                            <div class="flex items-center gap-3">
+                                <input v-if="form.anwaltGefordert" v-model="form.anwaltBestaerktDurch" type="text" placeholder="Keiner verf. best. durch DN" class="bg-neutral-900 border border-neutral-800 rounded p-1.5 text-xs w-40" />
+                                <button @click="form.anwaltGefordert = !form.anwaltGefordert" :class="[form.anwaltGefordert ? 'bg-emerald-500' : 'bg-neutral-700', 'w-12 h-6 rounded-full p-1 transition-colors relative']">
+                                    <div :class="[form.anwaltGefordert ? 'translate-x-6' : 'translate-x-0', 'w-4 h-4 bg-white rounded-full transition-transform']"></div>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Medizin -->
+                        <div class="flex items-center justify-between p-3 bg-neutral-950 border border-neutral-800 rounded-lg">
+                            <span class="text-xs font-medium">Wurde medizinische Behandlung benötigt?</span>
+                            <button @click="form.medizinBenoetigt = !form.medizinBenoetigt" :class="[form.medizinBenoetigt ? 'bg-emerald-500' : 'bg-neutral-700', 'w-12 h-6 rounded-full p-1 transition-colors relative']">
+                                <div :class="[form.medizinBenoetigt ? 'translate-x-6' : 'translate-x-0', 'w-4 h-4 bg-white rounded-full transition-transform']"></div>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 6. Gezeichnet von -->
+                <div class="bg-neutral-900/60 border border-neutral-800 rounded-xl p-5 space-y-3">
+                    <label class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-emerald-400">
+                        <i data-lucide="pen-tool" class="w-4 h-4"></i> Gezeichnet Von
+                    </label>
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                        <input v-model="form.zeichnerName" type="text" placeholder="Name" class="bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-sm focus:border-emerald-500" />
+                        <input v-model="form.zeichnerDN" type="text" placeholder="Dienstnummer" class="bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-sm focus:border-emerald-500" />
+                        <select v-model="form.zeichnerRang" class="bg-neutral-950 border border-neutral-800 rounded-lg p-2.5 text-sm focus:border-emerald-500">
+                            <option v-for="rang in raenge" :key="rang" :value="rang">{{ rang }}</option>
+                        </select>
+                    </div>
+                </div>
+
+            </section>
+
+            <!-- RIGHT COLUMN: Live Document Preview (5 Cols) -->
+            <section class="lg:col-span-5 flex flex-col h-full">
+                <div class="sticky top-6 bg-neutral-900 border border-neutral-800 rounded-xl p-5 flex flex-col flex-grow shadow-2xl">
+                    <div class="flex items-center justify-between pb-4 mb-4 border-b border-neutral-800">
+                        <div class="flex items-center gap-2 text-sm font-semibold uppercase tracking-wider text-neutral-300">
+                            <i data-lucide="eye" class="w-4 h-4 text-emerald-400"></i> Live-Vorschau
+                        </div>
+                        <button @click="copyToClipboard" class="flex items-center gap-2 px-3 py-1.5 bg-emerald-500 hover:bg-emerald-600 text-black font-semibold text-xs rounded-lg transition-colors shadow-lg shadow-emerald-500/20">
+                            <i data-lucide="copy" class="w-3.5 h-3.5"></i> {{ copied ? 'Kopiert!' : 'Akte kopieren' }}
+                        </button>
+                    </div>
+
+                    <!-- Output Box -->
+                    <div class="flex-grow bg-neutral-950 border border-neutral-800/80 rounded-lg p-4 font-mono text-xs text-neutral-300 whitespace-pre-wrap overflow-y-auto leading-relaxed select-all">
+                        {{ generatedText }}
+                    </div>
+                </div>
+            </section>
+
+        </main>
+
+        <!-- Footer -->
+        <footer class="mt-8 pt-4 border-t border-neutral-900 text-center">
+            <span class="text-[10px] text-neutral-600 tracking-widest uppercase">made by Stitch</span>
+        </footer>
+
+    </div>
+
+    <!-- Vue Application Script -->
+    <script>
+        const { createApp, ref, computed, onMounted, updated } = Vue;
+
+        createApp({
+            setup() {
+                const copied = ref(false);
+
+                const ortePreset = [
+                    { name: 'Hoover Laden PLZ 7326', plz: '7326' },
+                    { name: 'Westhighway Laden PLZ 5067', plz: '5067' },
+                    { name: 'Laden 1000, PLZ 1000', plz: '1000' },
+                    { name: 'Laden 1012, PLZ 1012', plz: '1012' },
+                    { name: 'Vespucci PD, PLZ 8090', plz: '8090' },
+                    { name: 'Staatsbank PLZ 7090', plz: '7090' },
+                    { name: 'Roxwoodbank PLZ 988', plz: '988' },
+                    { name: 'Juwelier PLZ 7251', plz: '7251' },
+                    { name: 'Staatsgefängnis PLZ 4000', plz: '4000' },
+                    { name: 'Freie Eingabe...', plz: '' }
+                ];
+
+                const raenge = [
+                    'Deputy Trainee I', 'Deputy Trainee II', 'Deputy', 'Senior Deputy', 
+                    'Corporal', 'Sergeant', 'Sergeant II', 'Staff Sergeant', 'Master Sergeant', 
+                    'Trial Lieutenant', 'Lieutenant', 'Lieutenant II', 'Master Lieutenant', 
+                    'Captain', 'Trial Commander', 'Commander', 'Chief Deputy', 'Assistant Sheriff', 
+                    'Undersheriff', 'Sheriff'
+                ];
+
+                const selectedOrt = ref('Hoover Laden PLZ 7326');
+                const singleGegenstaende = ref('1x Pistole\n1x Smartphone');
+
+                // Form State
+                const form = ref({
+                    aktenart: 'Schnellakte',
+                    ortText: 'Hoover Laden',
+                    plz: '7326',
+                    datum: '23.07.2026',
+                    beginnZeit: 'XX:XX',
+                    endeZeit: 'XX:XX',
+                    tvGender: 'Männlich',
+                    tvs: [
+                        { daten: 'Vorname Nachname, Geb.: XX.XX.XXXX', gegenstaende: 'Keine' }
+                    ],
+                    sachverhalt: '',
+                    fahndungGrund: '',
+                    verknuepfteAkte: 'Name der Akte',
+                    fallId: 'XXX',
+                    fahndungZweck: 'Vollstreckung einer offenen Akte',
+                    genehmigtDienstnummer: '',
+                    genehmigtUhrzeit: '',
+                    rechteDN: 'DIENSTNUMMER',
+                    zeugeDN: 'DIENSTNUMMER',
+                    richterDa: false,
+                    richterBestaerktDurch: 'DIENSTNUMMER',
+                    anwaltGefordert: true,
+                    anwaltBestaerktDurch: 'DIENSTNUMMER',
+                    medizinBenoetigt: false,
+                    zeichnerName: 'Leo Delpiero',
+                    zeichnerDN: 'SD-61',
+                    zeichnerRang: 'Senior Deputy'
+                });
+
+                const isKollektiv = computed(() => {
+                    return form.value.aktenart === 'Kollektivakte' || form.value.aktenart === 'Kollektivschnellakte';
+                });
+
+                const hasSachverhalt = computed(() => {
+                    return ['Strafakte', 'Kollektivakte', 'Bußgeldbescheid', 'Fahndung'].includes(form.value.aktenart);
+                });
+
+                const handleOrtChange = () => {
+                    const match = ortePreset.find(o => o.name === selectedOrt.value);
+                    if (match && match.plz) {
+                        form.value.plz = match.plz;
+                        form.value.ortText = match.name;
+                    } else {
+                        form.value.ortText = selectedOrt.value;
+                    }
+                };
+
+                const addTV = () => {
+                    form.value.tvs.push({ daten: '', gegenstaende: '' });
+                };
+
+                const removeTV = (index) => {
+                    form.value.tvs.splice(index, 1);
+                };
+
+                // Computed Text Generator
+                const generatedText = computed(() => {
+                    const header = `⭐ NARCO COUNTY SHERIFF DEPARTMENT ⭐\n       | - Special Emergency Response Team - |\n\n`;
+                    let body = `| Tatort und Zeitraum:|\n${form.value.ortText}${form.value.plz ? ' PLZ ' + form.value.plz : ''}\n`;
+
+                    if (form.value.aktenart === 'Fahndung') {
+                        body += `Am ${form.value.datum} um ${form.value.beginnZeit}\n\n`;
+                    } else {
+                        body += `Am ${form.value.datum} von ${form.value.beginnZeit} bis ${form.value.endeZeit}\n\n`;
+                    }
+
+                    // Sachverhalt
+                    if (hasSachverhalt.value) {
+                        body += `| Sachverhalt aus Sicht des SERTs: |\n${form.value.sachverhalt || 'Angaben zum Sachverhalt'}\n\n`;
+                    }
+
+                    // TVs / Gegenstände
+                    if (form.value.aktenart === 'Fahndung') {
+                        body += `| Grund der Fahndung: |\n${form.value.fahndungGrund}\n\n`;
+                        body += `| Verknüpfte Akte: |\n[${form.value.verknuepfteAkte}]  |  Fall-ID: [${form.value.fallId}]\n\n`;
+                    } else if (isKollektiv.value || form.value.tvGender === 'Mehrere') {
+                        form.value.tvs.forEach((tv, idx) => {
+                            body += `| Tatverdächtiger ${idx + 1}:|\n${tv.daten || 'Vorname Nachname, Geb.: XX.XX.XXXX'}\nAbgenommene Gegenstände:\n${tv.gegenstaende || 'Keine'}\n\n`;
+                        });
+                        if (isKollektiv.value && form.value.genehmigtDienstnummer) {
+                            body += `| Genehmigung:|\nKollektivakte genehmigt von ${form.value.genehmigtDienstnummer} um ${form.value.genehmigtUhrzeit || 'XX:XX'} Uhr.\n\n`;
+                        }
+                    } else {
+                        body += `| Abgenommene Gegenstände:|\n${singleGegenstaende.value || 'Keine'}\n\n`;
+                    }
+
+                    // Bemerkungen
+                    body += `| Bemerkungen:|\n`;
+                    const plural = isKollektiv.value || form.value.tvGender === 'Mehrere';
+                    
+                    body += `Die Rechte wurden ${plural ? 'den Beschuldigten' : 'dem Beschuldigten'} durch ${form.value.rechteDN || 'DIENSTNUMMER'} im Beisein von ${form.value.zeugeDN || 'DIENSTNUMMER'} verlesen und verstanden.\n`;
+
+                    if (form.value.aktenart === 'Fahndung') {
+                        body += `Der o.g. Beschuldigte ist flüchtig. Beim Antreffen des Beschuldigten ist dieser festzunehmen und über seine Rechte zu belehren und der gerechten Strafe zuzuführen.\n`;
+                        body += `${form.value.medizinBenoetigt ? 'Medizinische Behandlung wurde durchgeführt.' : 'Es wurde keine medizinische Behandlung benötigt.'}\n`;
+                        body += `Der Zweck der Fahndung ist: ${form.value.fahndungZweck || 'Vollstreckung einer offenen Akte.'}\n\n`;
+                    } else {
+                        body += `Der Beschuldigte ${form.value.anwaltGefordert ? '(BESTAND)' : '(VERZICHTETE)'} auf einen Rechtsbeistand.\n`;
+                        body += `Der Beschuldigte ${form.value.medizinBenoetigt ? '(BENÖTIGTE)' : '(VERZICHTETE)'} auf medizinische Versorgung.\n`;
+                        if (!form.value.richterDa) {
+                            body += `Kein Haftrichter verfügbar - bestätigt von: ${form.value.richterBestaerktDurch || 'DIENSTNUMMER'}\n\n`;
+                        } else {
+                            body += `Haftrichter war anwesend.\n\n`;
+                        }
+                    }
+
+                    // Gezeichnet
+                    body += `| Gezeichnet von:|\n${form.value.zeichnerName || 'Name'} | ${form.value.zeichnerDN || 'DN'} | ${form.value.zeichnerRang}`;
+
+                    return header + body;
+                });
+
+                const copyToClipboard = () => {
+                    navigator.clipboard.writeText(generatedText.value);
+                    copied.value = true;
+                    setTimeout(() => copied.value = false, 2000);
+                };
+
+                const initLucide = () => {
+                    if (window.lucide) {
+                        window.lucide.createIcons();
+                    }
+                };
+
+                onMounted(initLucide);
+                updated(initLucide);
+
+                return {
+                    form,
+                    selectedOrt,
+                    singleGegenstaende,
+                    ortePreset,
+                    raenge,
+                    isKollektiv,
+                    hasSachverhalt,
+                    handleOrtChange,
+                    addTV,
+                    removeTV,
+                    generatedText,
+                    copyToClipboard,
+                    copied
+                };
+            }
+        }).mount('#app');
+    </script>
+</body>
+</html>
